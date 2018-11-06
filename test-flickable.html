@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Test</title>
+</head>
+<body>
+  BlahBlahBlah
+  <div id="flicker" style="width: 100%; height: 8in; background: red; overflow: hidden; -moz-user-select: none;">
+    <img id="flicker-content" src="./test.png" style="pointer-events: none; -moz-user-select: none;" />
+  </div>
+  <a href="javascript:void(0)" id="button-reset">Reset</a>
+  <a href="javascript:void(0)" id="button-bind">Bind</a>
+  <a href="javascript:void(0)" id="button-unbind">Unbind</a>
+  <script type="module">
+    import { Flickable } from "./hico-flickable.js";
+    import { Button } from "./hico-button.js";
+    (()=>{
+      const reset = Button.bind_to_id("button-reset");
+      const button_unbind = Button.bind_to_id("button-unbind");
+      const button_bind = Button.bind_to_id("button-bind");
+      const button = Button.bind_to_id("button-unbind");
+      const img = document.getElementById("flicker-content");
+      let flicker;
+      function bind() {
+        flicker = Flickable.bind_to_id("flicker");
+        flicker.flick_content = img;
+        flicker.reset_viewport_to_center();
+        reset.click_handler = (ev)=>{
+          flicker.reset_viewport_to_center();
+          console.log("Reset.");
+        };
+        button_unbind.click_handler = (ev)=>{
+          flicker.unbind();
+          console.log("Unbinded.");
+        };
+        button_bind.click_handler = (ev)=>{
+          bind();
+          console.log("Binded.");
+        };
+      }
+      bind();
+    })();
+  </script>
+</body>
+</html>

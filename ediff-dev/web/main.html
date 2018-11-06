@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Color Reduce Demo</title>
+</head>
+
+<body>
+  <canvas id="draw_area"></canvas>
+  <input type="range" min="0" max="100" value="50" class="slider" id="diffusion_strength" />
+  <select id="pattern_mode">
+    <option value="0">sRGB pattern in sRGB color space</option>
+    <option value="1">sRGB pattern in YUV color space</option>
+    <option value="2">CMYK pattern in sRGB color space</option>
+    <option value="3">CMYK pattern in YUV color space</option>
+    <option value="4">YUV pattern in YUV color space</option>
+    <option value="5">RGB pattern in RGB color space</option>
+  </select>
+  <span id="loading">Loading...</span>
+  <span id="file_name"></span>
+  <button id="choose_file">Choose File</button>
+  <script src="./main.js"></script>
+</body>
+</html>

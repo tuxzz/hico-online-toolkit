@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <title>Data URI Generator | Hico Toolkit</title>
+  <link href="hico-common.css" rel="stylesheet">
+  <link rel="dns-prefetch" href="https://tuxzz.org">
+  <style>
+    #Info {
+      margin: 0.125in 0;
+      text-align: center;
+    }
+
+    #ButtonBox {
+      height: 0.75in;
+    }
+
+    #ButtonBox a.Button {
+      height: 100%;
+      min-width: 2in;
+    }
+
+    a.FileBox {
+      width: 100%;
+      height: 3in;
+      text-align: center;
+      border: 1.5px solid #000;
+      border-radius: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="Container">
+    <nav id="Navigator">
+      <div id="SiteTitle"><span>Hico Online</span><br><span>Toolkit</span></div>
+      <a class="Button Current"><span>Data URI<br>Generator</span></a>
+      <a class="Button" href="https://toolkit.tuxzz.org/ediff.html"><span>Error Diffusion<br>Art Generator</span></a>
+      <div class="FlexFiller"></div>
+      <a class="Button" href="https://tuxzz.org/"><span>About</span></a>
+    </nav>
+    <div id="PageContent">
+      <h1>Data URI Generator</h1>
+      <a id="Bottom-FileSelect" class="Button FileBox Disabled">
+        <span>Drop your file here<br>Or click to select a file</span>
+      </a>
+      <div id="Info">Filename: <span id="FileName">(Empty)</span><br>Generated Data URI: <span id="DataURIInfo">(Empty)</span><br>Auto detected MIME: <span id="AutoMIME">(Empty)</span></div>
+      <div id="ButtonBox">
+        <a id="Button-Copy" class="Button Disabled">Copy Data URI</a>
+        <a id="Button-Download" class="Button Disabled">Download Data URI</a>
+      </div>
+    </div>
+  </div>
+  <div id="FSModal"><span id="ModalText">Drop Here</span></div>
+
+  <script type="module">
+    import { Button } from "./hico-button.js";
+    import { DropReceiver } from "./hico-dropreceiver.js";
+    import { number_to_string_with_comma, choose_file, copy_text, save_bytearray } from "./hico-util.js";
+
+    const fs_modal = document.getElementById("FSModal");
+    const container = document.getElementById("Container");
+
+    const button_copy = Button.bind_to_id("Button-Copy");
+    const button_download = Button.bind_to_id("Button-Download");
+    const button_file = Button.bind_to_id("Bottom-FileSelect");
+    let file_recv;
+    bind_file_recv();
+    
+    const text_filename = document.getElementById("FileName");
+    const text_datauri_info = document.getElementById("DataURIInfo");
+    const text_auto_mime = document.getElementById("AutoMIME");
+    const text_modal = document.getElementById("ModalText");
+    
+    let generated_data_uri = "data:;base64,";
+
+    function show_modal(s) {
+      fs_modal.className = "Visible";
+      container.className = "BackHidden";
+      text_modal.innerText = s;
+    }
+
+    function hide_modal() {
+      fs_modal.className = "";
+      container.className = "";
+    }
+
+    function show_msg(s) {
+      alert(s);
+    }
+
+    function disable_button(btn) {
+      const l = btn.raw_html_element.classList;
+      if(!l.contains("Disabled"))
+        l.add("Disabled");
+    }
+
+    function enable_button(btn) {
+      const l = btn.raw_html_element.classList;
+      l.remove("Disabled");
+    }
+
+    function bind_file_recv() {
+      file_recv = DropReceiver.bind_to(window);
+      file_recv.on_dragenter = ()=>{
+        show_modal("Drop Here");
+      };
+      file_recv.on_dragleave = hide_modal;
+      file_recv.on_received = (ev)=>{
+        hide_modal();
+        const fl = ev.dataTransfer.files;
+        if(fl.length <= 0) {
+          show_msg("Error: You can only drop file into here.");
+          return;
+        }
+        gen_data_uri(fl[0]);
+      }
+    }
+
+    function disable_all_button() {
+      disable_button(button_copy);
+      disable_button(button_file);
+      disable_button(button_download);
+      file_recv.unbind();
+      file_recv = null;
+    }
+
+    function enable_all_button() {
+      enable_button(button_copy);
+      enable_button(button_file);
+      enable_button(button_download);
+      if(file_recv === null)
+        bind_file_recv();
+    }
+
+    function on_gen_error(ev) {
+      text_datauri_info.innerText = "Error(" + ev.message + ")";
+      enable_all_button();
+    }
+
+    function gen_data_uri(f)
+    {
+      button_copy.raw_html_element.innerText = "Copy Data URI";
+      const file_size = f.size;
+      text_filename.innerText = f.name + " (" + number_to_string_with_comma(file_size) + " byte" + (file_size > 1 ? "s" : "") + ")";
+      text_datauri_info.innerText = "Calculating...";
+      text_auto_mime.innerText = f.type;
+      const fr = new FileReader();
+      fr.onload = ()=>{
+        generated_data_uri = fr.result;
+        const out_length = generated_data_uri.length;
+        const ratio = out_length / file_size - 1.0;
+        text_datauri_info.innerText = number_to_string_with_comma(out_length) + " byte" + (out_length > 1 ? "s" : "") + " (" + Math.abs(ratio * 100.0).toFixed(2) + "% " + (ratio < 0 ? "smaller" : "larger") + ")";
+        enable_all_button();
+        if(out_length > 262144)
+          disable_button(button_copy);
+        window.removeEventListener("error", on_gen_error);
+      };
+      fr.readAsDataURL(f);
+      window.addEventListener("error", on_gen_error);
+      disable_all_button();
+    }
+
+    window.addEventListener("error", (ev)=>{
+      show_msg("Error: " + ev.message);
+    });
+
+    button_copy.click_handler = ()=>{
+      button_copy.raw_html_element.innerText = "Copied";
+      copy_text(generated_data_uri);
+    };
+
+    button_download.click_handler = ()=>{
+      save_bytearray("data_uri.txt", "text/plain", new TextEncoder().encode(generated_data_uri));
+    };
+
+    button_file.click_handler = ()=>{
+      choose_file(gen_data_uri, "*", false);
+    };
+
+    enable_all_button();
+  </script>
+</body>
+</html>

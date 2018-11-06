@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Test</title>
+</head>
+<body>
+  <a href="https://google.com" id="button-a">A Button</a>
+  <a id="button-b">B Button</a>
+  <a id="button-c">C Button</a>
+  <button id="button-real">Real Button</button>
+  <input type="submit" id="button-fake" value="Fake Button" />
+  <script type="module">
+    import { Button } from "./hico-button.js";
+    const a = Button.bind_to_id("button-a");
+    const b = Button.bind_to_id("button-b");
+    const c = Button.bind_to_id("button-c");
+    const real = Button.bind_to_id("button-real");
+    const fake = Button.bind_to_id("button-fake");
+    a.click_handler = (ev)=>{
+      alert("Hello from A ButtOn!");
+      a.unbind();
+    };
+    b.click_handler = (ev)=>{
+      alert("Hello from B Button!");
+      b.unbind();
+    };
+    self.c = c;
+    c.click_handler = `javascript:(()=>{
+      alert("Hello from C Button!");
+      self.c.unbind();
+    })()`;
+    real.click_handler = (ev)=>{
+      alert("Hello from the Real Button!");
+      real.unbind();
+    };
+    fake.click_handler = (ev)=>{
+      alert("Hello from the Fake Button!");
+      fake.unbind();
+    };
+  </script>
+</body>
+</html>

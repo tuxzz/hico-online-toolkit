@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <title>Error Diffusion Art Generator | Hico Toolkit</title>
+  <link href="common.css" rel="stylesheet">
+  <link rel="dns-prefetch" href="https://tuxzz.org">
+  <style>
+    #Info
+    {
+      margin: 0.125in 0;
+      text-align: center;
+    }
+
+    #ButtonBox
+    {
+      height: 0.75in;
+    }
+
+    #ButtonBox a.Button
+    {
+      height: 100%;
+      min-width: 2in;
+    }
+
+    input#ManualMIME
+    {
+      margin: 0.125in 0;
+      border: 1px solid #000;
+      font-family: "Microsoft YaHei UI", Arial, Helvetica, "sans";
+      font-size: 0.175in;
+      font-weight: lighter;
+      width: 2in;
+      height: auto;
+    }
+
+    input.Helper
+    {
+      position: fixed;
+      user-select: none;
+      pointer-events: none;
+      touch-action: none;
+      opacity: 0;
+      z-index: -99999;
+    }
+
+    #ImageView.Flickable
+    {
+      width: 100%;
+      height: 5in;
+      overflow: hidden;
+    }
+
+    #FileSelect.Button.FileBox
+    {
+      min-height: 0.75in;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <input id="CopyHelper" class="Helper" type="text" />
+  <input id="FileHelper" class="Helper" type="file" />
+  <div id="Container">
+    <nav id="Navigator">
+      <div id="SiteTitle"><span>Hico Online</span><br><span>Toolkit</span></div>
+      <a class="Button"><span>Data URI<br>Generator</span></a>
+      <a class="Button Current"><span>Error Diffusion<br>Art Generator</span></a>
+      <div class="FlexFiller"></div>
+      <a class="Button" href="https://tuxzz.org/"><span>About</span></a>
+    </nav>
+    <div id="PageContent">
+      <h1>Error Diffusion Art Generator</h1>
+      <div id="ImageView" class="Flickable">
+        <img src="test.png" />
+      </div>
+      <a id="FileSelect" class="Button FileBox">
+        <span>Drop your file here<br>Or click to select a file</span>
+      </a>
+      <div id="Info">Filename: <span id="FileName"></span><br>Generated Data URI: <span id="DataURIInfo"></span><br>Auto detected MIME: <span id="AutoMIME"></span></div>
+      <div id="ButtonBox">
+        <a id="CopyDataURIButton" class="Button">Copy Data URI</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="FullScreenCover"><span>Drop Here</span></div>
+
+  <script>
+    (function(){
+      "use strict";
+      const copyHelper = document.getElementById("CopyHelper");
+      const fileHelper = document.getElementById("FileHelper");
+      const fullScreenCover = document.getElementById("FullScreenCover");
+      const container = document.getElementById("Container");
+      const textArea = document.createElement("textarea");
+      const copyDataURIButton = document.getElementById("CopyDataURIButton");
+      const fileSelect = document.getElementById("FileSelect");
+      const image_view = document.getElementById("ImageView");
+      const image_view_child = image_view.firstElementChild;
+
+      const fileName = document.getElementById("FileName");
+      const dataURIInfo = document.getElementById("DataURIInfo");
+      const autoMIME = document.getElementById("AutoMIME");
+
+      let g_mouse_pressed = false;
+      let [g_flicker_last_mouse_x, g_flicker_last_mouse_y] = [0, 0];
+      let [g_flicker_content_h, g_flicker_content_w] = [image_view_child.clientHeight, image_view_child.clientWidth];
+      let [g_flicker_viewport_y, g_flicker_viewport_x, g_flicker_viewport_h, g_flicker_viewport_w] = [0, 0, g_flicker_content_h, g_flicker_content_w];
+
+      image_view_child.onload = function() {
+        console.log("Image Loaded:", image_view_child.clientHeight, image_view_child.clientWidth);
+        [g_flicker_content_h, g_flicker_content_w] = [image_view_child.clientHeight, image_view_child.clientWidth];
+        [g_flicker_viewport_y, g_flicker_viewport_x, g_flicker_viewport_h, g_flicker_viewport_w] = [0, 0, g_flicker_content_h, g_flicker_content_w]
+      }
+
+      function numberWithComma(x)
+      { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+      function showCover()
+      {
+        fullScreenCover.className = "Show";
+        container.className = "Blur";
+      }
+
+      function hideCover()
+      {
+        fullScreenCover.className = "";
+        container.className = "";
+      }
+
+      let dragLevel = [];
+      document.body.ondragenter = function(e) {
+        e.preventDefault();
+        if(dragLevel.length === 0)
+          showCover();
+        dragLevel.push(e.target);
+      };
+
+      document.body.ondragleave = function(e) {
+        e.preventDefault();
+        dragLevel.pop();
+        if(dragLevel.length === 0)
+          hideCover();
+      };
+
+      document.body.ondragover = function(e) {
+        e.preventDefault();
+      };
+
+      document.body.ondrop = function(e) {
+        e.preventDefault();
+        dragLevel = [];
+        hideCover();
+
+        let fileList = e.dataTransfer.files;
+        if(fileList.length === 0)
+          return false;
+        genDataURI(fileList[0]);
+        console.log(fileList[0]);
+      };
+
+      fileSelect.onclick = function() {
+        fileHelper.onchange = null;
+        fileHelper.value = null;
+        fileHelper.onchange = function() { genDataURI(fileHelper.files[0]); }; 
+        fileHelper.click();
+      };
+
+      function check_pos_in_flickable(y, x) {
+        return x >= image_view.offsetLeft && x < image_view.offsetLeft + image_view.offsetWidth && y >= image_view.offsetTop && y < image_view.offsetTop + image_view.offsetHeight;
+      }
+
+      function set_viewport(y, x, h, w) {
+        const [img_h, img_w] = [image_view_child.clientHeight, image_view_child.clientWidth];
+        const [scale_y, scale_x] = [h / img_h, w / img_w];
+        console.log("translate(" + x + "px, " + y + "px)" + "scale(" + scale_x + ", " +scale_y + ")");
+        image_view_child.style.transform = "translate(" + x + "px, " + y + "px)" + "scale(" + scale_x + ", " +scale_y + ")";
+        [g_flicker_viewport_y, g_flicker_viewport_x, g_flicker_viewport_h, g_flicker_viewport_w] = [y, x, h, w];
+      }
+
+      function map_to_image(y, x) {
+        const [img_h, img_w] = [image_view_child.clientHeight, image_view_child.clientWidth];
+        const [scale_y, scale_x] = [g_flicker_viewport_h / img_h, g_flicker_viewport_w / img_w];
+        let ny = (y - g_flicker_viewport_y) * scale_y;
+        let nx = (x - g_flicker_viewport_x) * scale_x;
+        return [ny, nx];
+      }
+
+      window.addEventListener("wheel", function(ev) {
+        if(ev.screenX < image_view.offsetLeft || ev.screenX >= image_view.offsetLeft + image_view.width)
+          return;
+        if(ev.screenY < image_view.offsetTop || ev.screenY >= image_view.offsetTop + image_view.height)
+          return;
+        const [x, y, dwy] = [ev.clientX - image_view.offsetLeft, ev.clientY - image_view.offsetTop, ev.deltaY];
+        if(ev.shiftKey) {
+          const [img_h, img_w] = [image_view_child.clientHeight, image_view_child.clientWidth];
+
+          const [iy, ix] = map_to_image(y, x);
+          const fac = (1.0 - dwy * 0.05);
+          const new_viewport_h = g_flicker_viewport_h * fac;
+          const new_viewport_w = g_flicker_viewport_w * fac;
+          const new_viewport_y = g_flicker_viewport_y + (iy - img_h) / img_h * g_flicker_viewport_h * dwy * 0.05;
+          const new_viewport_x = g_flicker_viewport_x + (ix - img_w) / img_w * g_flicker_viewport_w * dwy * 0.05;
+          set_viewport(new_viewport_y, new_viewport_x, new_viewport_h, new_viewport_w);
+          window.x = image_view_child;
+          ev.preventDefault();
+        }
+      });
+
+      window.addEventListener("click", function(ev) {
+        if(ev.buttons == 4) {
+          const [x, y, dwy] = [ev.clientX - image_view.offsetLeft, ev.clientY - image_view.offsetTop, ev.deltaY];
+          ev.preventDefault();
+        }
+      });
+
+      window.addEventListener("mousedown", function(ev) {
+        if(ev.buttons == 4) {
+          const [x, y, dwy] = [ev.clientX - image_view.offsetLeft, ev.clientY - image_view.offsetTop, ev.deltaY];
+          ev.preventDefault();
+        }
+      });
+
+      window.addEventListener("mouseup", function(ev) {
+        if(ev.buttons == 4) {
+          ev.preventDefault();
+        }
+      });
+
+      window.addEventListener("mousemove", function(ev) {
+        const [x, y] = [ev.offsetX, ev.offsetY];
+        if(ev.buttons == 4) {
+          const [dx, dy] = [x - g_flicker_last_mouse_x, y - g_flicker_last_mouse_y];
+
+          g_flicker_viewport_x += dx;
+          g_flicker_viewport_y += dy;
+
+          set_viewport(g_flicker_viewport_y, g_flicker_viewport_x, g_flicker_viewport_h, g_flicker_viewport_w);
+          ev.preventDefault();
+        }
+        [g_flicker_last_mouse_x, g_flicker_last_mouse_y] = [x, y];
+      });
+    })();
+  </script>
+</body>
+</html>

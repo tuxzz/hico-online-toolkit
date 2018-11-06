@@ -1,0 +1,1747 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <title>Error Diffusion Art Generator | Hico Toolkit</title>
+  <link rel="dns-prefetch" href="https://tuxzz.org">
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: "Microsoft YaHei UI", Arial, Helvetica, "sans";
+      font-size: 0.175in;
+      font-weight: lighter;
+    }
+
+    * { 
+      box-sizing: content-box;
+    }
+
+    a.B{
+      box-sizing: border-box;
+      display: block;
+      border: 2px solid transparent;
+      transition: border-color 0.25s, background-color 0.125s, color 0.125s, transform 0.05s;
+      color: #000;
+      cursor: default;
+      user-select: none;
+      -moz-user-select: none;
+      text-decoration: none;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      
+    }
+
+    a.B:hover {
+      background-color: #000;
+      color: #fff;
+    }
+
+    a.B:active {
+      transform: scale(0.95);
+    }
+
+    a.B.D {
+      pointer-events: none;
+      touch-action: none;
+      color: #aaa;
+    }
+
+    #T {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      transition: filter 0.5s;
+    }
+
+    #T.H {
+      filter: brightness(1.5) saturate(5) blur(0.2in);
+      transition: filter 0.5s;
+    }
+
+    #N {
+      padding: 0 0.05in;
+      display: flex;
+      flex-direction: column;
+      width: 2in;
+    }
+
+    #N a.B{
+      border-left: 2px solid transparent;
+      min-height: 0.5in;
+    }
+
+    #N a.B.U {
+      border-left: 2px solid #000;
+    }
+
+    #N a.B.U:hover {
+      border-left: 2px solid #aaa;
+    }
+
+    #S {
+      font-size: 0.25in;
+      user-select: none;
+      -moz-user-select: none;
+      text-align: center;
+      padding: 0.125in 0;
+    }
+
+    #S span:last-child:before {
+      display: inline;
+      content: "Hico ";
+      color: transparent;
+    }
+
+    #P {
+      flex: 1 0 0;
+      padding: 0 0.25in;
+    }
+
+    h1 {
+      font-size: 0.3in;
+      font-weight: lighter;
+      padding: 0.25in 0;
+      margin: 0;
+    }
+
+    #M {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      transition: background 0.5s;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      font-size: 0.375in;
+      opacity: 0;
+      transition: opacity 0.25s;
+      user-select: none;
+      -moz-user-select: none;
+      pointer-events: none;
+      touch-action: none;
+    }
+
+    #M.Visible {
+      opacity: 1;
+      transition: opacity 0.25s;
+      pointer-events: auto;
+      touch-action: auto;
+    }
+
+    .FlexFiller {
+      flex: 1 0 0;
+    }
+
+    input[type='range'] {
+      -webkit-appearance: none;
+      margin: 0;
+      padding: 10px 0;
+      width: 100%;
+    }
+
+    input[type='range']:focus {
+      outline: none;
+    }
+
+    input[type='range']::-moz-range-thumb {
+      width: 0.2in;
+      height: 100%;
+      background: #000;
+      border: none;
+      border-radius: 0;
+      transition: background 0.125s, transform 0.05s;
+    }
+
+    input[type='range']::-moz-range-track {
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(to right, transparent 1px, transparent calc(5% - 1px), #000 5%, transparent calc(5% + 1px), transparent 10%);
+      border: none;
+      border-radius: 0;
+      transition: background 0.125s, transform 0.05s;
+    }
+
+    input[type='range']:focus::-moz-range-track {
+      background: repeating-linear-gradient(to right, #eee 1px, #eee calc(5% - 1px), #000 5%, #eee calc(5% + 1px), #eee 10%);
+    }
+
+    input[type='range']:hover::-moz-range-track {
+      background: repeating-linear-gradient(to right, #000 1px, #000 calc(5% - 1px), #fff 5%, #000 calc(5% + 1px), #000 10%);
+    }
+
+    input[type='range']:hover::-moz-range-thumb {
+      background: #fff;
+    }
+
+    input[type='range']:active::-moz-range-thumb {
+      transform-origin: 50% 50%;
+      transform: scale(0.8, 0.8);
+    }
+
+    input[type='range']::-webkit-slider-thumb {
+      width: 0.2in;
+      height: 100%;
+      background: #000;
+      border: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+      transition: background 0.125s, transform 0.05s;
+    }
+
+    input[type='range']::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(to right, #fff 1px, #fff calc(5% - 1px), #000 5%, #fff calc(5% + 1px), #fff 10%);
+      border: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+      transition: background 0.125s, transform 0.05s;
+    }
+
+    input[type='range']:focus::-webkit-slider-runnable-track {
+      background: repeating-linear-gradient(to right, #eee 1px, #eee calc(5% - 1px), #000 5%, #eee calc(5% + 1px), #eee 10%);
+    }
+
+    input[type='range']:hover::-webkit-slider-runnable-track {
+      background: repeating-linear-gradient(to right, #000 1px, #000 calc(5% - 1px), #fff 5%, #000 calc(5% + 1px), #000 10%);
+    }
+
+    input[type='range']:hover::-webkit-slider-thumb {
+      background: #fff;
+    }
+
+    input[type='range']:active::-webkit-slider-thumb {
+      transform-origin: 50% 50%;
+      transform: scale(0.8, 0.8);
+    }
+
+    input[type='range']::-ms-track {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 0;
+      transition: background 0.125s, transform 0.05s;
+    }
+
+    html, body {
+      overflow: hidden;
+    }
+
+    h1 {
+      user-select: none;
+      -moz-user-select: none;
+      pointer-events: none;
+      touch-action: none;
+      z-index: 100;
+    }
+
+    #M, h1, #Box, #N {
+      background: url('noisewhite.png'); /* TO BE INLINED */
+    }
+
+    #N {
+      z-index: 100;
+    }
+
+    #P {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #Info {
+      margin: 0.125in 0;
+      text-align: center;
+    }
+
+    #X {
+      display: flex;
+      flex-direction: row;
+    }
+
+    #X a.B{
+      width: 25%;
+      min-height: 0.5in;
+      padding: 0 0.05in;
+    }
+
+    #DrawBox {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      flex: 1 0 0;
+    }
+
+    #DrawFlickable {
+      position: relative;
+      flex: 1 0 0;
+      z-index: 0;
+    }
+
+    #Draw {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #Box {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    input[type="range"]#G {
+      display: block;
+      width: 100%;
+      height: 0.25in;
+    }
+  </style>
+</head>
+<body>
+  <div id="T">
+    <nav id="N">
+      <div id="S"><span>Hico Online</span><br><span>Toolkit</span></div>
+      <a class="B" href="https://toolkit.tuxzz.org/datauri.html"><span>Data URI<br>Generator</span></a>
+      <a class="B U"><span>Error Diffusion<br>Art Generator</span></a>
+      <div class="FlexFiller"></div>
+      <a class="B" href="https://tuxzz.org/"><span>About</span></a>
+    </nav>
+    <div id="P">
+      <h1>Error Diffusion Art Generator</h1>
+      <div id="DrawBox">
+        <div id="DrawFlickable">
+          <canvas id="Draw"></canvas>
+        </div>
+        <div id="Box">
+          <div id="Info">Filename: <span id="FileName"></span><br>Size: <span id="ImageSizeInfo"></span></div>
+          <input id="G" type="range" value="500" min="0" max="1000">
+          <div id="X">
+            <a id="Button-Reset" class="B D">Reset Viewport</a>
+            <a id="Button-Cube" class="B D">Wait...</a>
+            <a id="Button-Load" class="B D">Open Image</a>
+            <a id="Button-Save" class="B D">Save Image</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="M"><span id="Q">Drop Here</span></div>
+
+  <script>
+    (()=>{
+      function hico_assert(cond, msg) {
+        if(!cond)
+          throw msg;
+      }
+
+      function hico_assert_intern(cond, msg) {
+        hico_assert(cond, "Internal error: " + msg);
+      }
+
+      function find_one_from_list(l, cond) {
+        const n = l.length;
+        if(cond instanceof Function) {
+          for(let i = 0; i < n; ++i) {
+            if(cond(l[i]) === true)
+              return i;
+          }
+        }
+        else {
+          for(let i = 0; i < n; ++i) {
+            if(l[i] === cond)
+              return i;
+          }
+        }
+        return null;
+      }
+
+      function remove_all_from_list(l, cond) {
+        const n = l.length;
+        let n_removed = 0;
+        if(cond instanceof Function) {
+          for(let i = 0; i < n; ++i) {
+            if(cond(l[i])) {
+              l.splice(i, 1);
+              ++n_removed;
+            }
+          }
+        }
+        else {
+          for(let i = 0; i < n; ++i) {
+            if(l[i] === cond) {
+              l.splice(i, 1);
+              ++n_removed;
+            }
+          }
+        }
+        return n_removed;
+      }
+
+      function remove_one_from_list(l, cond) {
+        const n = l.length;
+        if(cond instanceof Function) {
+          for(let i = 0; i < n; ++i) {
+            if(cond(l[i])) {
+              l.splice(i, 1);
+              return true;
+            }
+          }
+        }
+        else {
+          for(let i = 0; i < n; ++i) {
+            if(l[i] === cond) {
+              l.splice(i, 1);
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+
+      function lerp(a, b, ratio) {
+        return a + (b - a) * ratio;
+      }
+
+      function number_to_string_with_comma(x)
+      { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+      function choose_file(cb, mime, multi)
+      {
+        let f = document.createElement("input");
+        f.type = "file";
+        f.style.display = "none";
+        if(multi) {
+          f.multiple = "multiple";
+          f.onchange = ()=>{ cb(f.files) }; 
+        }
+        else
+          f.onchange = ()=>{ cb(f.files[0]) }; 
+        f.accept = mime;
+        document.body.appendChild(f);
+        f.click();
+        f.remove();
+      }
+
+      function copy_text(s) {
+        hico_assert(s.length <= 262144, "String is too long for copy(max 262144 character, got " + s.length);
+
+        const textarea = document.createElement("textarea");
+        textarea.innerText = s;
+
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        document.execCommand("copy");
+
+        textarea.remove();
+      }
+
+      function download_url(name, url) {
+        const link = document.createElement("a");
+        link.href = url
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+
+      function save_bytearray(name, mime, data) {
+        const blob = new Blob([data], {type: mime});
+        download_url(name, URL.createObjectURL(blob));
+      };
+
+      function load_data_from_img(img) {
+        const canvas = document.createElement("canvas"); 
+        canvas.height = img.height;
+        canvas.width = img.width;
+        const ctx = canvas.getContext("2d", {
+          "alpha": true,
+          "willReadFrequently": true,
+        });
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        return {
+          "h": canvas.height,
+          "w": canvas.width,
+          "data": data,
+        };
+      }
+
+      let HTMLBindable;
+      {
+        class C {
+          constructor(html_element) {
+            if(new.target === HTMLBindable)
+              throw "Cannot construct Bindable instances directly";
+            if(!html_element instanceof HTMLElement)
+              throw "Argument of HTMLBindable must be a HTMLElement";
+            this._raw_html_element = html_element;
+          }
+          
+          get raw_html_element() {
+            return this._raw_html_element;
+          }
+
+          unbind() {
+            if(!this.raw_html_element)
+              throw new TypeError("Not binded");
+            this._raw_html_element = null;
+          }
+
+          map_screen_to_element(y, x) {
+            let rect = this.raw_html_element.getBoundingClientRect();
+            return [y - rect.top, x - rect.left];
+          }
+
+          map_element_to_screen(ey, ex) {
+            let rect = this.raw_html_element.getBoundingClientRect();
+            return [ey + rect.top, ex + rect.left];
+          }
+
+          static bind_to(x) {
+            if(Symbol.iterator in x) {
+              const l = [];
+              for(let v of x)
+                l.push(bind_to(v));
+              return l;
+            }
+            else
+              return new this(x);
+          }
+
+          static bind_to_id(element_id) {
+            const x = document.getElementById(element_id);
+            if(!x)
+              throw "No such element id:" + element_id;
+            return this.bind_to(x);
+          }
+
+          static bind_to_class(class_name) {
+            const x = document.getElementsByClassName(class_name);
+            return this.bind_to(x);
+          }
+        }
+        HTMLBindable = C;
+      }
+
+      let Button;
+      {
+        function prevent_default(ev) {
+          ev.preventDefault();
+        }
+
+        function rebind_handler(button, f) {
+          const element = button.raw_html_element;
+          if(button._real_handler !== null)
+            element.removeEventListener("click", button._real_handler);
+          button._real_handler = f;
+          if(f !== null)
+            element.addEventListener("click", f);
+        }
+
+        class C extends HTMLBindable {
+          constructor(html_element) {
+            if(!html_element instanceof EventTarget)
+              throw new TypeError("Argument of Button must be a HTMLElement + EventTarget");
+            super(html_element);
+
+            this._real_handler = null;
+
+            const tag = html_element.tagName.toLowerCase();
+            if(tag === "a" && html_element.href) {
+              this.click_handler = html_element.href;
+              this._saved_href = html_element.href;
+            }
+            else {
+              this._click_handler = null;
+              this._saved_href = null;
+            }
+            html_element.addEventListener("dragstart", prevent_default);
+          }
+
+          set click_handler(v) {
+            const element = this.raw_html_element;
+            const is_a = element.tagName.toLowerCase() === "a";
+            if(v instanceof Function) {
+              if(is_a)
+                element.href = "javascript:void(0);";
+              rebind_handler(this, (ev)=>{
+                v(ev);
+                ev.preventDefault();
+              });
+            }
+            else if(typeof v === "string") {
+              if(is_a) {
+                element.href = v;
+                rebind_handler(this, null);
+              }
+              else {
+                rebind_handler(this, (ev)=>{
+                  window.location.href = v;
+                  ev.preventDefault();
+                });
+              }
+            }
+            else if(v === null) {
+              if(is_a)
+                element.removeAttribute("href");
+              rebind_handler(this, null);
+            }
+            else
+              throw new TypeError("Invalid type for click_handler");
+          }
+
+          get click_handler() {
+            return this._click_handler;
+          }
+
+          set allow_drag(v) {
+            if(v)
+              html_element.addEventListener("dragstart", prevent_default);
+            else
+              html_element.removeEventListener("dragstart", prevent_default);
+          }
+
+          unbind() {
+            if(this.raw_html_element.tagName.toLowerCase() === "a" && this._saved_href)
+              this.click_handler = this._saved_href;
+            else
+              this.click_handler = null;
+            html_element.removeEventListener("dragstart", prevent_default);
+            super.unbind();
+          }
+        }
+        Button = C;
+      }
+      
+      let DropReceiver;
+      {
+        const c_text = ""
+        class C extends HTMLBindable {
+          constructor(html_element) {
+            if(!html_element instanceof EventTarget)
+              throw new TypeError("Argument of DropReceiver must be a HTMLElement + EventTarget");
+            super(html_element);
+
+            this.on_dragenter = null;
+            this.on_dragleave = null;
+            this.on_received = null;
+
+            this._entered_level = null;
+
+            const me = this;
+            this._on_dragenter = (ev)=>{
+              ev.preventDefault();
+              if(me._entered_level === null) {
+                if(me.on_dragenter !== null)
+                  me.on_dragenter(ev, me);
+                me._entered_level = [];
+              }
+              me._entered_level.push(ev.target);
+            };
+
+            this._on_dragleave = (ev)=>{
+              ev.preventDefault();
+              if(me._entered_level.length == 1) {
+                me._entered_level = null;
+                if(me.on_dragleave !== null)
+                  me.on_dragleave(ev, me);
+              }
+              else
+                me._entered_level.pop();
+            };
+
+            this._on_dragover = (ev)=>{
+              ev.preventDefault();
+            };
+
+            this._on_drop = (ev)=>{
+              ev.preventDefault();
+              me._entered_level = null;
+              if(me.on_received !== null)
+                me.on_received(ev, me);
+            };
+
+            this._on_dragend = (ev)=>{
+              ev.preventDefault();
+              if(me.on_dragenter !== null)
+                me.on_dragleave(ev, me);
+              me._entered_level = null;
+            };
+
+            html_element.addEventListener("dragenter", this._on_dragenter);
+            html_element.addEventListener("dragleave", this._on_dragleave);
+            html_element.addEventListener("dragover", this._on_dragover);
+            html_element.addEventListener("drop", this._on_drop);
+            html_element.addEventListener("dragend", this._on_dragend);
+          }
+
+          unbind() {
+            const html_element = this.raw_html_element;
+            
+            this.on_dragenter = null;
+            this.on_dragleave = null;
+            this.on_received = null;
+            html_element.removeEventListener("dragenter", this._on_dragenter);
+            html_element.removeEventListener("dragleave", this._on_dragleave);
+            html_element.removeEventListener("dragover", this._on_dragover);
+            html_element.removeEventListener("drop", this._on_drop);
+            html_element.removeEventListener("dragend", this._on_dragend);
+            super.unbind();
+          }
+        }
+        DropReceiver = C;
+      }
+
+      let Rect;
+      {
+        class C {
+          constructor(y, x, h, w) {
+            this.y = y;
+            this.x = x;
+            this.h = h;
+            this.w = w;
+          }
+
+          normalize() {
+            if(this.h < 0) {
+              this.y += this.h;
+              this.h = -this.h;
+            }
+            if(this.w < 0) {
+              this.x += this.w;
+              this.w = -this.w;
+            }
+          }
+
+          normalized() {
+            const o = this.clone();
+            o.normalize();
+            return o;
+          }
+
+          clone() {
+            return new Rect(this.y, this.x, this.h, this.w);
+          }
+
+          get top() {
+            return this.h >= 0 ? this.y : this.y + this.h;
+          }
+
+          get bottom() {
+            return this.h >= 0 ? this.y + this.h : this.y;
+          }
+
+          get left() {
+            return this.w >= 0 ? this.x : this.x + this.w;
+          }
+
+          get right() {
+            return this.w >= 0 ? this.x + this.w : this.x;
+          }
+
+          set top(v) {
+            this.normalize();
+            const d = v - this.top;
+            this.y += d;
+            this.h -= d;
+          }
+
+          set bottom(v) {
+            this.normalize();
+            this.h = v - this.top;
+          }
+
+          set left(v) {
+            this.normalize();
+            const d = v - this.left;
+            this.x += d;
+            this.w -= d;
+          }
+
+          set right(v) {
+            this.normalize();
+            this.w = v - this.left;
+          }
+
+          static from_yxhw(y, x, h, w) {
+            const v = new Rect(y, x, h, w);
+            v.normalize();
+            return v;
+          }
+
+          static from_tblr(t, b, l, r) {
+            const v = new Rect(t, b - t, l, r - l);
+            v.normalize();
+            return v;
+          }
+        }
+        Rect = C;
+      }
+
+      let Flickable;
+      {
+        const c_move_button = 1;
+        const c_sub_move_button = 0;
+        const c_scale_button = 2;
+        const c_scale_content_size_limit = 16;
+
+        let g_scale_button_pressed = null;
+        let g_move_button_pressed = null;
+        let g_first_mouse_pos = null;
+        let g_first_touch_list = null;
+
+        let g_transcation_flickable = null;
+        let g_orig_viewport = null;
+        let g_uncommited_movement = null;
+        let g_uncommited_scale_movement = null;
+        let g_uncommited_scale = null;
+
+        function transcation_viewport(flickable) {
+          hico_assert_intern(!g_transcation_flickable, "Transcation is already created");
+          g_transcation_flickable = flickable;
+          g_orig_viewport = flickable.viewport;
+          g_uncommited_movement = [0, 0];
+          g_uncommited_scale_movement = [0, 0];
+          g_uncommited_scale = [1.0, 1.0];
+        }
+
+        function rollback_viewport() {
+          hico_assert_intern(g_transcation_flickable, "Transcation is not created");
+
+          g_transcation_flickable.viewport = g_orig_viewport;
+
+          g_transcation_flickable = null;
+          g_orig_viewport = null;
+          g_uncommited_movement = null;
+          g_uncommited_scale_movement = null;
+          g_uncommited_scale = null;
+        }
+
+        function preview_viewport() {
+          hico_assert_intern(g_transcation_flickable, "Transcation is not created");
+
+          const flickable = g_transcation_flickable;
+          flickable.viewport = g_orig_viewport;
+          const [umy, umx] = flickable.map_screen_to_viewport_delta(...g_uncommited_movement);
+          const [usmy, usmx] = flickable.map_screen_to_viewport_delta(...g_uncommited_scale_movement);
+          const [usy, usx] = g_uncommited_scale;
+          const o = g_orig_viewport;
+          const vp = Rect.from_yxhw(o.y + umy + usmy, o.x + umx + usmx, o.h * usy, o.w * usx);
+          flickable.viewport = vp;
+          return vp;
+        }
+
+        function commit_viewport() {
+          hico_assert_intern(g_transcation_flickable, "Transcation is not created");
+
+          preview_viewport();
+
+          g_transcation_flickable = null;
+          g_orig_viewport = null;
+          g_uncommited_movement = null;
+          g_uncommited_scale_movement = null;
+          g_uncommited_scale = null;
+        }
+
+        function move_flickable(dy, dx) {
+          hico_assert_intern(g_transcation_flickable, "Transcation is not created");
+          const [umy, umx] = g_uncommited_movement;
+          g_uncommited_movement = [umy - dy, umx - dx];
+        }
+
+        function set_flickable_movement(my, mx) {
+          hico_assert_intern(g_transcation_flickable, "Transcation is not created");
+          g_uncommited_movement = [-my, -mx];
+        }
+
+        function scale_flickable(ey, ex, fy, fx) {
+          hico_assert_intern(g_transcation_flickable, "Transcation is not created");
+          fx = fx === "number" ? fx : fy;
+
+          const [usmy, usmx] = g_uncommited_scale_movement;
+          const [usy, usx] = g_uncommited_scale;
+          const [sy, sx] = [usy * fy, usx * fx];
+          const [ch, cw] = g_transcation_flickable.content_size;
+          if(ch * ch / (g_orig_viewport.h * sy) < c_scale_content_size_limit || cw * cw / (g_orig_viewport.w * sx) < c_scale_content_size_limit)
+            return;
+          g_uncommited_scale_movement = [usmy + ey * (1.0 - fy), usmx + ex * (1.0 - fx)];
+          g_uncommited_scale = [sy, sx];
+        }
+
+        function get_flickable_scale_limit() {
+          const [ch, cw] = g_transcation_flickable.content_size;
+          return [(ch * ch) / (c_scale_content_size_limit * g_orig_viewport.h), (cw * cw) / (c_scale_content_size_limit * g_orig_viewport.w)];
+        }
+
+        function set_flickable_scale(ey, ex, sy, sx) {
+          hico_assert_intern(g_transcation_flickable, "Transcation is not created");
+          sx = sx === "number" ? sx : sy;
+
+          const [sy_limit, sx_limit] = get_flickable_scale_limit();
+          hico_assert_intern(sy <= sy_limit && sx <= sx_limit, "Scale factor reached limit");
+
+          g_uncommited_scale_movement = [ey * (1.0 - sy), ex * (1.0 - sx)];
+          g_uncommited_scale = [sy, sx];
+        }
+
+        function on_mousedown(ev, flickable) {
+          if(g_first_touch_list !== null)
+            return;
+          const button = ev.button;
+          const [ey, ex] = flickable.map_screen_to_element(ev.clientY, ev.clientX);
+          if((button === c_move_button || button === c_sub_move_button) && g_scale_button_pressed === null && (g_move_button_pressed === null || find_one_from_list(g_move_button_pressed, button) === null)) {
+            if(g_move_button_pressed === null)
+            {
+              transcation_viewport(flickable);
+              g_move_button_pressed = [];
+              g_first_mouse_pos = [ey, ex];
+            }
+            g_move_button_pressed.push(button);
+
+            ev.preventDefault();
+          }
+          else if(button === c_scale_button && g_move_button_pressed === null && (g_scale_button_pressed === null || find_one_from_list(g_scale_button_pressed, button) === null)) {
+            if(g_scale_button_pressed === null) {
+              g_scale_button_pressed = [];
+              transcation_viewport(flickable);
+              g_first_mouse_pos = [ey, ex];
+            }
+            g_scale_button_pressed.push(button);
+            ev.preventDefault();
+          }
+        }
+
+        function on_wheel(ev, flickable) {
+          if(g_scale_button_pressed !== null)
+            return;
+          const [ey, ex] = flickable.map_screen_to_element(ev.clientY, ev.clientX);
+          const dwy = ev.deltaY;
+
+          const fac = dwy > 0 ? 1.25 : 0.8;
+          let self_transcation = false;
+          if(!g_transcation_flickable) {
+            transcation_viewport(flickable);
+            self_transcation = true;
+          }
+          scale_flickable(ey, ex, fac);
+          if(self_transcation)
+            commit_viewport();
+          else
+          {
+            commit_viewport();
+            transcation_viewport(flickable);
+            if(g_move_button_pressed)
+              g_first_mouse_pos = [ey, ex];
+          }
+          ev.preventDefault();
+        }
+
+        window.addEventListener("mousemove", (ev)=>{
+          if(g_move_button_pressed) {
+            const [ey, ex] = g_transcation_flickable.map_screen_to_element(ev.clientY, ev.clientX);
+            const content = g_transcation_flickable.flick_content;
+            if(content === null)
+              return;
+            const [ly, lx] = g_first_mouse_pos;
+            const [my, mx] = [ey - ly, ex - lx];
+
+            set_flickable_movement(my, mx);
+            preview_viewport();
+
+            ev.preventDefault();
+          }
+          else if(g_scale_button_pressed) {
+            const [ey, ex] = g_transcation_flickable.map_screen_to_element(ev.clientY, ev.clientX);
+            const [ly, lx] = g_first_mouse_pos;
+            const mx = ex - lx;
+            const d = Math.abs(mx);
+            const dfac = d * 0.0025;
+            let f;
+            if(mx < 0)
+              f = Math.min(...get_flickable_scale_limit(), 1.0 + dfac);
+            else
+              f = Math.max(1e-5, 1 / (1.0 + dfac));
+            set_flickable_scale(ly, lx, f);
+            preview_viewport();
+            ev.preventDefault();
+          }
+        });
+
+        window.addEventListener("click", (ev)=>{
+          if(g_move_button_pressed !== null || g_scale_button_pressed !== null)
+            ev.preventDefault();
+        });
+
+        window.addEventListener("mouseup", (ev)=>{
+          if(g_move_button_pressed !== null) {
+            remove_one_from_list(g_move_button_pressed, ev.button);
+            if(g_move_button_pressed.length === 0) {
+              g_move_button_pressed = null;
+              commit_viewport();
+            }
+            ev.preventDefault();
+          }
+          else if(g_scale_button_pressed !== null) {
+            remove_one_from_list(g_scale_button_pressed, ev.button);
+            if(g_scale_button_pressed.length === 0) {
+              g_scale_button_pressed = null;
+              commit_viewport();
+            }
+            ev.preventDefault();
+          }
+        });
+
+        function preprocess_touch_list(flickable, touch_list) {
+          const l = [];
+          const n_touch = touch_list.length;
+          for(let i_touch = 0; i_touch < n_touch; ++i_touch) {
+            const touch = touch_list[i_touch];
+            const id = touch.identifier;
+            l.push({"id": id, "pos": flickable.map_screen_to_element(touch.clientY, touch.clientX)});
+          }
+          return l;
+        }
+
+        function on_touchstart(ev, flickable) {
+          if(g_move_button_pressed !== null || g_scale_button_pressed !== null)
+            return;
+          if(g_first_touch_list !== null)
+            commit_viewport();
+          transcation_viewport(flickable);
+          g_first_touch_list = preprocess_touch_list(flickable, ev.touches);
+          ev.preventDefault();
+        }
+
+        window.addEventListener("touchmove", (ev)=>{
+          if(g_first_touch_list === null)
+            return;
+          const flickable = g_transcation_flickable;
+          const touch_list = ev.touches;
+          const n_touch = touch_list.length;
+          const new_touch_list = preprocess_touch_list(flickable, touch_list);
+          const delta_touch_list = [];
+          new_touch_list.forEach((v)=>{
+            const id = v.id;
+            const i_first = find_one_from_list(g_first_touch_list, (w)=>{ return id === w.id; });
+            const [ty, tx] = v.pos;
+            if(i_first === null)
+              return;
+            const [lty, ltx] = g_first_touch_list[i_first].pos;
+            delta_touch_list.push({
+              "id": v.id,
+              "pos": [ty - lty, tx - ltx],
+            });
+          });
+
+          if(n_touch === 1) {
+            const [dy, dx] = delta_touch_list[0].pos;
+            set_flickable_movement(dy, dx);
+            preview_viewport();
+            ev.preventDefault();
+          }
+          else if(n_touch == 2) {
+            const [dy0, dx0] = delta_touch_list[0].pos;
+            const [dy1, dx1] = delta_touch_list[1].pos;
+
+            const [ly0, lx0] = g_first_touch_list[0].pos;
+            const [ly1, lx1] = g_first_touch_list[1].pos;
+            const [ny0, nx0] = new_touch_list[0].pos;
+            const [ny1, nx1] = new_touch_list[1].pos;
+            
+            const [cy, cx] = [(ly0 + ly1) * 0.5, (lx0 + lx1) * 0.5];
+
+            const ld = Math.sqrt((ly0 - ly1) * (ly0 - ly1) + (lx0 - lx1) * (lx0 - lx1));
+            const nd = Math.sqrt((ny0 - ny1) * (ny0 - ny1) + (nx0 - nx1) * (nx0 - nx1));
+            const dd = nd - ld;
+            const dfac = Math.abs(dd) * 0.01;
+            let f;
+            if(dd < 0)
+              f = Math.min(...get_flickable_scale_limit(), 1.0 + dfac);
+            else
+              f = Math.max(1e-5, 1 / (1.0 + dfac));
+            set_flickable_scale(cy, cx, f);
+            preview_viewport();
+            ev.preventDefault();
+          }
+        });
+
+        window.addEventListener("touchend", (ev)=>{
+          if(g_first_touch_list === null)
+            return;
+          const flickable = g_transcation_flickable;
+          commit_viewport();
+          if(ev.touches.length <= 0)
+            g_first_touch_list = null;
+          else {
+            g_first_touch_list = preprocess_touch_list(flickable, ev.touches);
+            transcation_viewport(flickable);
+          }
+          ev.preventDefault();
+        });
+
+        class C extends HTMLBindable {
+          constructor(html_element) {
+            if(!html_element instanceof EventTarget)
+              throw new TypeError("Argument of Flickable must be a HTMLElement + EventTarget");
+            super(html_element);
+
+            [this._last_view_h, this._last_view_w] = [Math.max(1, html_element.clientHeight), Math.max(1, html_element.clientWidth)];
+            this._flick_content = null;
+            this._viewport = Rect.from_yxhw(0, 0, 0, 0);
+
+            const me = this;
+            this._on_mousedown = (ev)=>{ on_mousedown(ev, me); };
+            this._on_wheel = (ev)=>{ on_wheel(ev, me); };
+            this._on_touchstart = (ev)=>{ on_touchstart(ev, me); };
+            this._on_contextmenu = (ev)=>{ ev.preventDefault(); };
+            this._saved_transform = null;
+            this._saved_transformOrigin = null;
+
+            html_element.addEventListener("mousedown", this._on_mousedown);
+            html_element.addEventListener("wheel", this._on_wheel);
+            html_element.addEventListener("touchstart", this._on_touchstart);
+            html_element.addEventListener("contextmenu", this._on_contextmenu);
+          }
+
+          set flick_content(e) {
+            if(this._flick_content !== null) {
+              this._flick_content.style.transform = this._saved_transform;
+              this._flick_content.style.transformOrigin = this._saved_transformOrigin;
+            }
+            if(e !== null) {
+              this._saved_transform = e.style.transform;
+              this._saved_transformOrigin = e.style.transformOrigin;
+            }
+            this._flick_content = e;
+          }
+
+          get flick_content() {
+            return this._flick_content;
+          }
+
+          get viewport() {
+            const flickable = this.raw_html_element;
+            const [vh, vw] = [Math.max(1, flickable.clientHeight), Math.max(1, flickable.clientWidth)];
+            if(vh != this._last_view_h) {
+              this._viewport.h *= vh / this._last_view_h;
+              this._last_view_h = vh;
+            }
+            if(vw != this._last_view_w) {
+              this._viewport.w *= vw / this._last_view_w;
+              this._last_view_w = vw;
+            }
+            return this._viewport.clone();
+          }
+
+          set viewport(r) {
+            this._viewport = r.normalized();
+            const e = this.flick_content;
+            if(e === null)
+              return;
+            const flickable = this.raw_html_element;
+            [this._last_view_h, this._last_view_w] = [Math.max(1, flickable.clientHeight), Math.max(1, flickable.clientWidth)];
+
+            const [scale_y, scale_x] = [flickable.clientHeight / r.h, flickable.clientWidth / r.w];
+            const [translate_y, translate_x] = [-r.y, -r.x];
+            e.style.transformOrigin = 0 + "px " + 0 + "px";
+            e.style.transform = "scale(" + scale_x + ", " + scale_y + ") " + "translate(" + translate_x +  "px, " + translate_y + "px) ";
+          }
+
+          get content_size() {
+            const content = this.flick_content;
+            if(!content)
+              return [1, 1];
+            return [content.clientHeight, content.clientWidth];
+          }
+
+          map_screen_to_viewport_delta(y, x) {
+            const e = this.flick_content;
+            if(e === null)
+              return [1, 1];
+            const r = this.viewport;
+            const flickable = this.raw_html_element;
+            const [scale_y, scale_x] = [flickable.clientHeight / r.h, flickable.clientWidth / r.w];
+            return [y / scale_y, x / scale_x];
+          }
+
+          reset_viewport_to_center() {
+            const e = this.flick_content;
+            if(e === null)
+              return;
+            const flickable = this.raw_html_element;
+            const flickable_aspect = flickable.clientHeight / flickable.clientWidth;
+            const [eh, ew] = [e.clientHeight, e.clientWidth];
+            let h, w, x, y;
+            [y, x] = [e.clientTop, e.clientLeft];
+            if(eh / ew <= flickable_aspect) {
+              [h, w] = [ew * flickable_aspect, ew];
+              y = (eh - h) * 0.5;
+            }
+            else {
+              [h, w] = [eh, eh / flickable_aspect];
+              x = (ew - w) * 0.5;
+            }
+            this.viewport = Rect.from_yxhw(y, x, h, w);
+          }
+          
+          unbind() {
+            const html_element = this.raw_html_element;
+            if(g_transcation_flickable === this)
+              rollback_viewport();
+            this.flick_content = null;
+            this.viewport = null;
+            html_element.removeEventListener("mousedown", this._on_mousedown);
+            html_element.removeEventListener("wheel", this._on_wheel);
+            html_element.removeEventListener("touchstart", this._on_touchstart);
+            html_element.removeEventListener("contextmenu", this._on_contextmenu);
+            super.unbind();
+          }
+        }
+        Flickable = C;
+      }
+
+      let EDiff;
+      {
+        const noise_size = 256;
+        const vert_shader_source = `#version 300 es
+  layout(location = 0)in vec3 a;layout(location = 1)in vec2 b;out vec2 ot;out vec2 on;uniform float aa;void main(){gl_Position=vec4(a.x,a.y,a.z,1.0);ot=b;on=b*aa;}`;
+        const frag_shader_srgb_source = `#version 300 es
+  in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc;uniform mediump float um;uniform mediump sampler2D ui;uniform mediump sampler2D un;uniform mediump sampler3D ua, ub;const mediump float q=1.0f/255.0f;const mediump float a=0.055;mediump vec3 d8(mediump vec3 m){mediump vec3 r=mod(m,q);mediump vec3 s=m-r;mediump vec3 n = texture(un,on).rgb;s+=vec3(greaterThan(r,n))*q;return s;}mediump vec3 dr(mediump vec3 x){const mediump mat3 m=transpose(mat3(0.299,0.587,0.114,-0.168736,-0.331264,0.5,0.5,-0.418688,-0.081312));return m*x+vec3(0.0,0.5,0.5);}mediump vec3 dy(mediump vec3 x){const mediump mat3 m=transpose(mat3(1,-1.21889419e-06,1.40199959e+00,1,-3.44135678e-01,-7.14136156e-01,1,1.77200007e+00,4.06298063e-07));return m*(x-vec3(0.0,0.5,0.5));}mediump vec3 s2lin(mediump vec3 x){mediump vec3 s=vec3(lessThanEqual(x,vec3(0.04045)));return s*(x/12.92)+(1.0-s)*pow((x+a)*(1.0/(1.0+a)),vec3(2.4));}mediump vec3 dl(mediump vec3 x){mediump vec3 s=vec3(lessThanEqual(x,vec3(0.0031308049535603713)));return s*(x*12.92)+(1.0-s)*((1.0+a)*pow(x,vec3(1.0/2.4))-a);}mediump vec3 lut_conv(mediump vec3 img){return mix(texture(ua,img).rgb,texture(ub,img).rgb,um);}void main(){mediump vec4 t=texture(ui,ot);if(uc==0)t.xyz=lut_conv(t.zyx);else if(uc==1)t.xyz=dy(lut_conv(dr(t.xyz).zyx));else if(uc==2)t.xyz=dl(lut_conv(s2lin(t.xyz).zyx));color.rgb=d8(t.rgb);color.a=t.a;}`;
+
+        const plane_vertex = new Float32Array([
+          /* x, y, z, u, v */
+          -1.0, -1.0, 0.0, 0.0, 1.0,
+          -1.0, 1.0, 0.0, 0.0, 0.0,
+          1.0, -1.0, 0.0, 1.0, 1.0,
+          1.0, 1.0, 0.0, 1.0, 0.0
+        ]);
+
+        const noise_tex_data = new Float32Array(noise_size * noise_size * 3);
+        for(let i = 0; i < noise_size * noise_size * 3; ++i) {
+          noise_tex_data[i] = (Math.random() * 0.95 + 0.05) / 255;
+        }
+
+        function create_shader(gl, type, source) {
+          const shader = gl.createShader(type);
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+          if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            let info = gl.getShaderInfoLog(shader);
+            throw "Could not compile " + (type === gl.VERTEX_SHADER ? "vertex" : "fragment") + " shader:\n" + info;
+          }
+          return shader;
+        }
+
+        function create_shader_program(gl, vert_shader, frag_shader) {
+          const shader_program = gl.createProgram();
+          gl.attachShader(shader_program, vert_shader);
+          gl.attachShader(shader_program, frag_shader);
+          gl.linkProgram(shader_program);
+          if(!gl.getProgramParameter(shader_program, gl.LINK_STATUS)) {
+            const info = gl.getProgramInfoLog(shader_program);
+            throw "Could not link shader program:\n" + info;
+          }
+          return shader_program;
+        }
+
+        function create_texture_3d(gl, img, h, w, d, c, color_depth, wrap_mode, scale_filter, src_offset) {
+          src_offset = src_offset | 0;
+          const tex = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_3D, tex);
+          gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, wrap_mode);
+          gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, wrap_mode);
+          gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, wrap_mode);
+          gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, scale_filter);
+          gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, scale_filter);
+          let ifmt, fmt, type;
+          if(c === 3 && color_depth === 16 && img.constructor === Uint16Array) {
+            ifmt = gl.RGB16F;
+            fmt = gl.RGB;
+            type = gl.HALF_FLOAT;
+          }
+          else
+            hico_assert_intern(false, "Invalid data type for Texture3D");
+          gl.texImage3D(gl.TEXTURE_3D, 0, ifmt, w, h, d, 0, fmt, type, img, src_offset);
+          gl.bindTexture(gl.TEXTURE_3D, null);
+          return tex;
+        }
+
+        function create_texture_2d(gl, img, h, w, c, depth, wrap_mode, scale_filter, src_offset) {
+          src_offset = src_offset | 0;
+          const tex = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap_mode);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap_mode);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, scale_filter);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, scale_filter);
+          let ifmt, fmt, type;
+          if(c === 4 && depth === 8 && (img.constructor === Uint8Array || img.constructor === Uint8ClampedArray)) {
+            if(img.constructor === Uint8ClampedArray)
+              img = new Uint8Array(img.buffer);
+            ifmt = gl.RGBA8;
+            fmt = gl.RGBA;
+            type = gl.UNSIGNED_BYTE;
+          }
+          else if(c === 3 && depth === 32 && img.constructor === Float32Array) {
+            ifmt = gl.RGB32F;
+            fmt = gl.RGB;
+            type = gl.FLOAT;
+          }
+          else
+            hico_assert_intern(false, "Invalid data type for Texture2D");
+          gl.texImage2D(gl.TEXTURE_2D, 0, ifmt, w, h, 0, fmt, type, img, src_offset);
+          gl.bindTexture(gl.TEXTURE_2D, null);
+          return tex;
+        }
+
+        function create_lut_cube_tex_list(gl, data, n_diffusion, n_s, n_p, n_t) {
+          const l = [];
+          for(let i_diff = 0; i_diff < n_diffusion; ++i_diff) {
+            const offset_diff = i_diff * n_s * n_p * n_t * 3;
+            const diffuse_cube = create_texture_3d(gl, data, n_s, n_p, n_t, 3, 16, gl.CLAMP_TO_EDGE, gl.LINEAR, offset_diff);
+            l.push(diffuse_cube);
+          }
+          return l;
+        }
+
+        class C extends HTMLBindable {
+          constructor(canvas) {
+            if(!canvas instanceof HTMLCanvasElement)
+              throw new TypeError("Argument of EDiff must be a instanceof HTMLCanvasElement");
+            super(canvas);
+
+            this._gl = null;
+            this._gl_vbo = null;
+            this._gl_vao = null;
+            this._gl_program = null;
+            this._gl_img_tex = null;
+            this._gl_noise_tex = null;
+            this._gl_loc_lut_mix_ratio = null;
+            this._gl_tex_lut_list = null;
+            this._gl_loc_color_mode = null;
+
+            this._lut_cube = null;
+            this._diffusion_strength = 0.5;
+            this._color_mode = 0;
+            this._dirty = false;
+          }
+
+          set_img(h, w, data) {
+            hico_assert(data.constructor === Uint8ClampedArray || data.constructor === Uint8Array, "Bad data type for data");
+            hico_assert(h > 0 && w > 0, "Bad input shape");
+            hico_assert(data.length === h * w * 4, "Bad input data length");
+
+            if(this._gl !== null)
+              this.clear_img();
+
+            const img = data;
+            const draw = this.raw_html_element;
+            const pixel_ratio = window.devicePixelRatio;
+
+            draw.height = h;
+            draw.width = w;
+            draw.style.height = h / pixel_ratio + "px";
+            draw.style.width = w / pixel_ratio + "px";
+            
+            const gl = draw.getContext("webgl2", {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "stencil": false,
+              "preserveDrawingBuffer": true,
+            });
+            hico_assert(gl !== null, "Unable to initialize WebGL 2.0.\nYour browser or machine may not support it.");
+
+            gl.viewport(0, 0, draw.width, draw.height);
+            
+            const vert_shader = create_shader(gl, gl.VERTEX_SHADER, vert_shader_source);
+            const frag_shader = create_shader(gl, gl.FRAGMENT_SHADER, frag_shader_srgb_source);
+            const shader_program = create_shader_program(gl, vert_shader, frag_shader);
+            gl.deleteShader(frag_shader);
+            gl.deleteShader(vert_shader);
+            
+            const loc_noise_scale_fac = gl.getUniformLocation(shader_program, "aa");
+            const loc_img_tex = gl.getUniformLocation(shader_program, "ui");
+            const loc_noise_tex = gl.getUniformLocation(shader_program, "un");
+            const loc_lut_a = gl.getUniformLocation(shader_program, "ua");
+            const loc_lut_b = gl.getUniformLocation(shader_program, "ub");
+            const loc_lut_mix_ratio = gl.getUniformLocation(shader_program, "um");
+            const loc_color_mode = gl.getUniformLocation(shader_program, "uc");
+
+            const vbo = gl.createBuffer();
+            const vao = gl.createVertexArray();
+            gl.bindVertexArray(vao);
+            gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+            gl.bufferData(gl.ARRAY_BUFFER, plane_vertex, gl.STATIC_COPY, 0, plane_vertex.length);
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+            gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+            gl.enableVertexAttribArray(0);
+            gl.enableVertexAttribArray(1);
+            gl.bindVertexArray(null);
+            
+            const tex = create_texture_2d(gl, img, h, w, 4, 8, gl.CLAMP_TO_EDGE, gl.NEAREST);
+            const noise_tex = create_texture_2d(gl, noise_tex_data, noise_size, noise_size, 3, 32, gl.MIRRORED_REPEAT, gl.NEAREST);
+
+            gl.useProgram(shader_program);
+            gl.uniform1f(loc_noise_scale_fac, (Math.max(draw.height, draw.width) / noise_size) | 0)
+            gl.uniform1i(loc_img_tex, 0);
+            gl.uniform1i(loc_noise_tex, 1);
+            gl.uniform1i(loc_lut_a, 2);
+            gl.uniform1i(loc_lut_b, 3);
+
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, noise_tex);
+
+            /* save necessary object */
+            this._gl = gl;
+            this._gl_vbo = vbo;
+            this._gl_vao = vao;
+            this._gl_program = shader_program;
+            this._gl_img_tex = tex;
+            this._gl_noise_tex = noise_tex;
+            this._gl_loc_lut_mix_ratio = loc_lut_mix_ratio;
+            this._gl_loc_color_mode = loc_color_mode;
+
+            if(this._lut_cube) {
+              this._gl_tex_lut_list = create_lut_cube_tex_list(gl, this._lut_cube.data, ...this._lut_cube.shape);
+              this._dirty = true;
+              this.request_redraw();
+            }
+          }
+
+          clear_img() {
+            if(this._gl === null)
+              return;
+            const gl = this._gl;
+
+            if(this._gl_tex_lut_list !== null)
+              this._gl_tex_lut_list.forEach((tex)=>{ gl.deleteTexture(tex); });
+            gl.deleteTexture(this._gl_noise_tex);
+            gl.deleteTexture(this._gl_img_tex);
+            gl.deleteProgram(this._gl_program);
+            gl.deleteVertexArray(this._gl_vao);
+            gl.deleteBuffer(this._gl_vbo);
+            
+            this._gl = null;
+            this._gl_vbo = null;
+            this._gl_vao = null;
+            this._gl_program = null;
+            this._gl_img_tex = null;
+            this._gl_noise_tex = null;
+            this._gl_loc_lut_mix_ratio = null;
+            this._gl_tex_lut_list = null;
+            this._gl_loc_color_mode = null;
+          }
+
+          set_lut_cube_ref(data, n_diffusion, n_s, n_p, n_t) {
+            hico_assert(data.constructor === Uint16Array, "Bad data type for data");
+            hico_assert(n_diffusion > 0 && n_s > 0 && n_p > 0 && n_t > 0, "Bad input shape");
+            hico_assert(data.length === n_diffusion * n_s * n_p * n_t * 3, "Bad input data length");
+            
+            const gl = this._gl;
+            if(this._gl_tex_lut_list !== null)
+              this.clear_lut_cube_ref();
+            if(gl !== null)
+              this._gl_tex_lut_list = create_lut_cube_tex_list(gl, data, n_diffusion, n_s, n_p, n_t);
+            this._lut_cube = {
+              "data": data,
+              "shape": [n_diffusion, n_s, n_p, n_t],
+            };
+
+            if(gl !== null) {
+              this._dirty = true;
+              this.request_redraw();
+            }
+          }
+
+          clear_lut_cube_ref() {
+            if(this._lut_cube === null)
+              return;
+            if(this._gl_tex_lut_list !== null) {
+              this._gl_tex_lut_list.forEach((tex)=>{ this._gl.deleteTexture(tex); });
+              this._gl_tex_lut_list = null;
+            }
+            this._lut_cube = null;
+          }
+
+          redraw() {
+            const gl = this._gl;
+            if(gl === null || this._diffusion_strength === null || this._lut_cube === null || this._color_mode === null)
+              return;
+            
+            gl.clearColor(0, 0, 0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            const [n_diffusion, n_s, n_p, n_t] = this._lut_cube.shape;
+            let i_diff_a, i_diff_b, r_diff;
+            {
+              const i_diff = this._diffusion_strength * (n_diffusion - 1);
+              let f_diff = Math.floor(i_diff) | 0;
+              let c_diff = Math.ceil(i_diff) | 0;
+              r_diff = i_diff - f_diff;
+              if(i_diff <= 0) {
+                f_diff = 0;
+                c_diff = 1;
+                r_diff = 0;
+              }
+              else if(i_diff >= n_diffusion - 1) {
+                f_diff = n_diffusion - 1;
+                c_diff = n_diffusion - 1;
+                r_diff = 1;
+              }
+              i_diff_a = f_diff;
+              i_diff_b = c_diff;
+            }
+
+            gl.useProgram(this._gl_program);
+            gl.uniform1i(this._gl_loc_color_mode, this._color_mode);
+            gl.uniform1f(this._gl_loc_lut_mix_ratio, r_diff);
+
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this._gl_img_tex);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, this._gl_noise_tex);
+            gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_3D, this._gl_tex_lut_list[i_diff_a]);
+            gl.activeTexture(gl.TEXTURE3);
+            gl.bindTexture(gl.TEXTURE_3D, this._gl_tex_lut_list[i_diff_b]);
+
+            gl.bindVertexArray(this._gl_vao);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            gl.bindVertexArray(null);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+          }
+
+          request_redraw() {
+            if(this._dirty) {
+              const me = this;
+              requestAnimationFrame(()=>{
+                me.redraw();
+                this._dirty = false;
+              });
+            }
+          }
+
+          set diffusion_strength(v) {
+            hico_assert(v >= 0 && v <= 1, "Invalid diffusion strength");
+            this._diffusion_strength = v;
+            this._dirty = true;
+            this.request_redraw();
+          }
+
+          set color_mode(v) {
+            hico_assert(v >= 0 && v <= 2, "Invalid color");
+            this._color_mode = v;
+            this._dirty = true;
+            this.request_redraw();
+          }
+
+          get diffusion_strength() {
+            return this._diffusion_strength;
+          }
+
+          get color_mode() {
+            return this._color_mode;
+          }
+
+          unbind() {
+            this.clear_img();
+            super.unbind();
+          }
+        }
+        EDiff = C;
+      }
+      import { lut_cube_bundle, n_diffusion, n_s, n_p, n_t, n_cube, cube_name_list, color_mode_list, cube_idx_list, n_mode } from "./cube-bundle.js"; // TO BE INLINED
+
+      let i_curr_mode = null;
+      const fs_modal = document.getElementById("M");
+      const container = document.getElementById("T");
+
+      const draw_flickable = Flickable.bind_to_id("DrawFlickable");
+      const ediff = EDiff.bind_to_id("Draw");
+      ediff.color_mode = 0;
+      const button_reset = Button.bind_to_id("Button-Reset");
+      const button_cube = Button.bind_to_id("Button-Cube");
+      const button_load = Button.bind_to_id("Button-Load");
+      let file_recv;
+      bind_file_recv();
+      const button_save = Button.bind_to_id("Button-Save");
+      
+      const input_strength = document.getElementById("G");
+      const text_filename = document.getElementById("FileName");
+      const text_sizeinfo = document.getElementById("ImageSizeInfo");
+      const text_modal = document.getElementById("Q");
+      const draw = document.getElementById("Draw");
+
+      update_diffusion_strength();
+      input_strength.addEventListener("input", update_diffusion_strength);
+      input_strength.addEventListener("change", update_diffusion_strength);
+
+      function update_diffusion_strength() {
+        const max = parseFloat(input_strength.max);
+        const min = parseFloat(input_strength.min)
+        const v = parseFloat(input_strength.value);
+        ediff.diffusion_strength = (v - min) / (max - min);
+      }
+
+      function show_modal(s) {
+        fs_modal.className = "Visible";
+        container.className = "H";
+        text_modal.innerText = s;
+      }
+
+      function hide_modal() {
+        fs_modal.className = "";
+        container.className = "";
+      }
+
+      function show_msg(s) {
+        alert(s);
+      }
+
+      function disable_button(btn) {
+        const l = btn.raw_html_element.classList;
+        if(!l.contains("D"))
+          l.add("D");
+      }
+
+      function enable_button(btn) {
+        const l = btn.raw_html_element.classList;
+        l.remove("D");
+      }
+
+      function bind_file_recv() {
+        file_recv = DropReceiver.bind_to(window);
+        file_recv.on_dragenter = ()=>{
+          show_modal("Drop Here");
+        };
+        file_recv.on_dragleave = hide_modal;
+        file_recv.on_received = (ev)=>{
+          hide_modal();
+          const fl = ev.dataTransfer.files;
+          const url = ev.dataTransfer.getData("text/plain");
+          let img;
+          if(url) {
+            show_msg("Error: You can't drag image url to here.");
+            return;
+          }
+          else if(fl.length <= 0 || fl[0].type.slice(0, 6).toLowerCase() !== "image/") {
+            show_msg("Error: You can only drop image file into here.");
+            return;
+          }
+          else {
+            if(fl.length > 1)
+              show_msg("Error: You can only drop 1 image at once.\nLoad first image file.");
+            img = fl[0];
+          }
+          load_image(img);
+        }
+      }
+
+      function disable_all_button() {
+        disable_button(button_reset);
+        disable_button(button_cube);
+        disable_button(button_load);
+        disable_button(button_save);
+        file_recv.unbind();
+        file_recv = null;
+      }
+
+      function enable_all_button() {
+        enable_button(button_reset);
+        enable_button(button_cube);
+        enable_button(button_load);
+        enable_button(button_save);
+        if(file_recv === null)
+          bind_file_recv();
+      }
+
+      function on_load_error(ev) {
+        text_datauri_info.innerText = "Error(" + ev.message + ")";
+        enable_all_button();
+      }
+
+      function select_lut_cube_mode(i_mode) {
+        hico_assert(i_mode >= 0 && i_mode < n_mode, "LUT mode index out of range");
+        const i_cube = cube_idx_list[i_mode];
+        const n = n_diffusion * n_s * n_p * n_t * 3;
+        const offset = i_cube * n * Uint16Array.BYTES_PER_ELEMENT;
+        const cube = new Uint16Array(lut_cube_bundle.buffer, offset, n);
+        ediff.set_lut_cube_ref(cube, n_diffusion, n_s, n_p, n_t);
+        ediff.color_mode = color_mode_list[i_mode];
+        button_cube.raw_html_element.innerText = cube_name_list[i_mode];
+        i_curr_mode = i_mode;
+      }
+
+      function load_image(f) {
+        const url = URL.createObjectURL(f);
+        text_filename.innerText = f.name;
+        text_sizeinfo.innerText = "Loading...";
+        window.addEventListener("error", on_load_error);
+        disable_all_button();
+
+        const img = new Image();
+        img.onload = function() {
+          const o = load_data_from_img(img);
+          text_sizeinfo.innerText = o.w + "Wx" + o.h + "H";
+          ediff.set_img(o.h, o.w, o.data);
+          draw_flickable.flick_content = draw;
+          draw_flickable.reset_viewport_to_center();
+          enable_all_button();
+        }
+        img.onerror = function() {
+          show_msg("Cannot load url '" + url + "' as an image");
+        };
+        img.src = url;
+        window.removeEventListener("error", on_load_error);
+      }
+
+      window.addEventListener("error", (ev)=>{
+        show_msg("Error: " + ev.message);
+      });
+
+      button_reset.click_handler = ()=>{
+        draw_flickable.reset_viewport_to_center();
+      };
+
+      button_cube.click_handler = ()=>{
+        const next_mode = (i_curr_mode + 1) % n_mode;
+        select_lut_cube_mode(next_mode);
+      };
+
+      button_load.click_handler = ()=>{
+        choose_file(load_image, "image/*", false);
+      };
+
+      button_save.click_handler = ()=>{
+        const canvas = ediff.raw_html_element;
+        canvas.toBlob((blob)=>{
+          download_url("out.png", URL.createObjectURL(blob));
+        }, "image/png");
+      };
+
+      select_lut_cube_mode(0);
+      enable_all_button();
+    })();
+  </script>
+</body>
+</html>
