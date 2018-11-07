@@ -6,6 +6,7 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="Cache-Control" content="no-siteapp">
   <title>Error Diffusion Art Generator | Hico Toolkit</title>
+  <link href="hico-common.css" rel="stylesheet">
   <link rel="dns-prefetch" href="https://tuxzz.org">
   <style>
     html, body {
@@ -22,7 +23,7 @@
       box-sizing: content-box;
     }
 
-    a.B{
+    a.Button {
       box-sizing: border-box;
       display: block;
       border: 2px solid transparent;
@@ -40,22 +41,22 @@
       
     }
 
-    a.B:hover {
+    a.Button:hover {
       background-color: #000;
       color: #fff;
     }
 
-    a.B:active {
+    a.Button:active {
       transform: scale(0.95);
     }
 
-    a.B.D {
+    a.Button.Disabled {
       pointer-events: none;
       touch-action: none;
       color: #aaa;
     }
 
-    #T {
+    #Container {
       width: 100%;
       height: 100%;
       display: flex;
@@ -63,32 +64,32 @@
       transition: filter 0.5s;
     }
 
-    #T.H {
+    #Container.BackHidden {
       filter: brightness(1.5) saturate(5) blur(0.2in);
       transition: filter 0.5s;
     }
 
-    #N {
+    #Navigator {
       padding: 0 0.05in;
       display: flex;
       flex-direction: column;
       width: 2in;
     }
 
-    #N a.B{
+    #Navigator a.Button {
       border-left: 2px solid transparent;
       min-height: 0.5in;
     }
 
-    #N a.B.U {
+    #Navigator a.Button.Current {
       border-left: 2px solid #000;
     }
 
-    #N a.B.U:hover {
+    #Navigator a.Button.Current:hover {
       border-left: 2px solid #aaa;
     }
 
-    #S {
+    #SiteTitle {
       font-size: 0.25in;
       user-select: none;
       -moz-user-select: none;
@@ -96,13 +97,13 @@
       padding: 0.125in 0;
     }
 
-    #S span:last-child:before {
+    #SiteTitle span:last-child:before {
       display: inline;
       content: "Hico ";
       color: transparent;
     }
 
-    #P {
+    #PageContent {
       flex: 1 0 0;
       padding: 0 0.25in;
     }
@@ -114,7 +115,7 @@
       margin: 0;
     }
 
-    #M {
+    #FSModal {
       position: fixed;
       left: 0;
       top: 0;
@@ -133,9 +134,10 @@
       -moz-user-select: none;
       pointer-events: none;
       touch-action: none;
+      z-index: 2147483647;
     }
 
-    #M.Visible {
+    #FSModal.Visible {
       opacity: 1;
       transition: opacity 0.25s;
       pointer-events: auto;
@@ -205,7 +207,7 @@
     input[type='range']::-webkit-slider-runnable-track {
       width: 100%;
       height: 100%;
-      background: repeating-linear-gradient(to right, #fff 1px, #fff calc(5% - 1px), #000 5%, #fff calc(5% + 1px), #fff 10%);
+      background: repeating-linear-gradient(to right, transparent 1px, #fff calc(5% - 1px), #000 5%, transparent calc(5% + 1px), transparent 10%);
       border: none;
       border-radius: 0;
       -webkit-appearance: none;
@@ -236,7 +238,6 @@
       border-radius: 0;
       transition: background 0.125s, transform 0.05s;
     }
-
     html, body {
       overflow: hidden;
     }
@@ -249,15 +250,15 @@
       z-index: 100;
     }
 
-    #M, h1, #Box, #N {
-      background: url('noisewhite.png'); /* TO BE INLINED */
+    #FSModal, h1, #Box, #Navigator {
+      background: url('noisewhite.png');
     }
 
-    #N {
+    #Navigator {
       z-index: 100;
     }
 
-    #P {
+    #PageContent {
       display: flex;
       flex-direction: column;
     }
@@ -267,12 +268,12 @@
       text-align: center;
     }
 
-    #X {
+    #ButtonBox {
       display: flex;
       flex-direction: row;
     }
 
-    #X a.B{
+    #ButtonBox a.Button {
       width: 25%;
       min-height: 0.5in;
       padding: 0 0.05in;
@@ -293,9 +294,10 @@
     }
 
     #Draw {
-      position: absolute;
+      position: relative;
       top: 0;
       left: 0;
+      z-index: 0;
     }
 
     #Box {
@@ -305,23 +307,28 @@
       z-index: 100;
     }
 
-    input[type="range"]#G {
+    input[type="range"]#DiffusionStrength {
       display: block;
       width: 100%;
       height: 0.25in;
     }
+
+    #Draw {
+      height: 64px;
+      width: 64px;
+    }
   </style>
 </head>
 <body>
-  <div id="T">
-    <nav id="N">
-      <div id="S"><span>Hico Online</span><br><span>Toolkit</span></div>
-      <a class="B" href="https://toolkit.tuxzz.org/datauri.html"><span>Data URI<br>Generator</span></a>
-      <a class="B U"><span>Error Diffusion<br>Art Generator</span></a>
+  <div id="Container">
+    <nav id="Navigator">
+      <div id="SiteTitle"><span>Hico Online</span><br><span>Toolkit</span></div>
+      <a class="Button" href="https://toolkit.tuxzz.org/datauri.html"><span>Data URI<br>Generator</span></a>
+      <a class="Button Current"><span>Error Diffusion<br>Art Generator</span></a>
       <div class="FlexFiller"></div>
-      <a class="B" href="https://tuxzz.org/"><span>About</span></a>
+      <a class="Button" href="https://tuxzz.org/"><span>About</span></a>
     </nav>
-    <div id="P">
+    <div id="PageContent">
       <h1>Error Diffusion Art Generator</h1>
       <div id="DrawBox">
         <div id="DrawFlickable">
@@ -329,20 +336,21 @@
         </div>
         <div id="Box">
           <div id="Info">Filename: <span id="FileName"></span><br>Size: <span id="ImageSizeInfo"></span></div>
-          <input id="G" type="range" value="500" min="0" max="1000">
-          <div id="X">
-            <a id="Button-Reset" class="B D">Reset Viewport</a>
-            <a id="Button-Cube" class="B D">Wait...</a>
-            <a id="Button-Load" class="B D">Open Image</a>
-            <a id="Button-Save" class="B D">Save Image</a>
+          <input id="DiffusionStrength" type="range" value="500" min="0" max="1000">
+          <div id="ButtonBox">
+            <a id="Button-Reset" class="Button Disabled">Reset Viewport</a>
+            <a id="Button-Cube" class="Button Disabled">Wait...</a>
+            <a id="Button-Load" class="Button Disabled">Open Image</a>
+            <a id="Button-Save" class="Button Disabled">Save Image</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div id="M"><span id="Q">Drop Here</span></div>
+  <div id="FSModal"><span id="ModalText">Drop Here</span></div>
 
   <script type="module">
+    import { lut_cube_bundle, n_diffusion, n_s, n_p, n_t, n_cube, cube_name_list, color_mode_list, cube_idx_list, n_mode } from "./cube-bundle.js";
     function hico_assert(cond, msg) {
       if(!cond)
         throw msg;
@@ -627,85 +635,6 @@
         }
       }
       Button = C;
-    }
-    
-    let DropReceiver;
-    {
-      const c_text = ""
-      class C extends HTMLBindable {
-        constructor(html_element) {
-          if(!html_element instanceof EventTarget)
-            throw new TypeError("Argument of DropReceiver must be a HTMLElement + EventTarget");
-          super(html_element);
-
-          this.on_dragenter = null;
-          this.on_dragleave = null;
-          this.on_received = null;
-
-          this._entered_level = null;
-
-          const me = this;
-          this._on_dragenter = (ev)=>{
-            ev.preventDefault();
-            if(me._entered_level === null) {
-              if(me.on_dragenter !== null)
-                me.on_dragenter(ev, me);
-              me._entered_level = [];
-            }
-            me._entered_level.push(ev.target);
-          };
-
-          this._on_dragleave = (ev)=>{
-            ev.preventDefault();
-            if(me._entered_level.length == 1) {
-              me._entered_level = null;
-              if(me.on_dragleave !== null)
-                me.on_dragleave(ev, me);
-            }
-            else
-              me._entered_level.pop();
-          };
-
-          this._on_dragover = (ev)=>{
-            ev.preventDefault();
-          };
-
-          this._on_drop = (ev)=>{
-            ev.preventDefault();
-            me._entered_level = null;
-            if(me.on_received !== null)
-              me.on_received(ev, me);
-          };
-
-          this._on_dragend = (ev)=>{
-            ev.preventDefault();
-            if(me.on_dragenter !== null)
-              me.on_dragleave(ev, me);
-            me._entered_level = null;
-          };
-
-          html_element.addEventListener("dragenter", this._on_dragenter);
-          html_element.addEventListener("dragleave", this._on_dragleave);
-          html_element.addEventListener("dragover", this._on_dragover);
-          html_element.addEventListener("drop", this._on_drop);
-          html_element.addEventListener("dragend", this._on_dragend);
-        }
-
-        unbind() {
-          const html_element = this.raw_html_element;
-          
-          this.on_dragenter = null;
-          this.on_dragleave = null;
-          this.on_received = null;
-          html_element.removeEventListener("dragenter", this._on_dragenter);
-          html_element.removeEventListener("dragleave", this._on_dragleave);
-          html_element.removeEventListener("dragover", this._on_dragover);
-          html_element.removeEventListener("drop", this._on_drop);
-          html_element.removeEventListener("dragend", this._on_dragend);
-          super.unbind();
-        }
-      }
-      DropReceiver = C;
     }
 
     let Rect;
@@ -1113,6 +1042,8 @@
           this._saved_transform = null;
           this._saved_transformOrigin = null;
 
+          this._force_content_size = null;
+
           html_element.addEventListener("mousedown", this._on_mousedown);
           html_element.addEventListener("wheel", this._on_wheel);
           html_element.addEventListener("touchstart", this._on_touchstart);
@@ -1150,24 +1081,38 @@
         }
 
         set viewport(r) {
-          this._viewport = r.normalized();
+          r = r.normalized();
+          this._viewport = r;
           const e = this.flick_content;
           if(e === null)
             return;
           const flickable = this.raw_html_element;
           [this._last_view_h, this._last_view_w] = [Math.max(1, flickable.clientHeight), Math.max(1, flickable.clientWidth)];
 
+          let [force_scale_y, force_scale_x] = [1, 1];
+          if(this._force_content_size !== null) {
+            const [fch, fcw] = this._force_content_size;
+            [force_scale_y, force_scale_x] = [fch / e.clientHeight, fcw / e.clientWidth];
+          }
           const [scale_y, scale_x] = [flickable.clientHeight / r.h, flickable.clientWidth / r.w];
           const [translate_y, translate_x] = [-r.y, -r.x];
           e.style.transformOrigin = 0 + "px " + 0 + "px";
-          e.style.transform = "scale(" + scale_x + ", " + scale_y + ") " + "translate(" + translate_x +  "px, " + translate_y + "px) ";
+          e.style.transform = "scale(" + scale_x * force_scale_x + ", " + scale_y * force_scale_y + ") " + "translate(" + translate_x / force_scale_x +  "px, " + translate_y / force_scale_y + "px) ";
         }
 
         get content_size() {
           const content = this.flick_content;
+          if(this._force_content_size !== null)
+            return this._force_content_size;
           if(!content)
             return [1, 1];
           return [content.clientHeight, content.clientWidth];
+        }
+
+        /* workaround for firefox bug */
+        set content_size(v) {
+          hico_assert(v === null || (v instanceof Array && v.length == 2), "Bad content_size value");
+          this._force_content_size = v;
         }
 
         map_screen_to_viewport_delta(y, x) {
@@ -1186,7 +1131,7 @@
             return;
           const flickable = this.raw_html_element;
           const flickable_aspect = flickable.clientHeight / flickable.clientWidth;
-          const [eh, ew] = [e.clientHeight, e.clientWidth];
+          const [eh, ew] = this.content_size;
           let h, w, x, y;
           [y, x] = [e.clientTop, e.clientLeft];
           if(eh / ew <= flickable_aspect) {
@@ -1216,13 +1161,95 @@
       Flickable = C;
     }
 
+    let DropReceiver;
+    {
+      class C extends HTMLBindable {
+        constructor(html_element) {
+          if(!html_element instanceof EventTarget)
+            throw new TypeError("Argument of DropReceiver must be a HTMLElement + EventTarget");
+          super(html_element);
+
+          this.on_dragenter = null;
+          this.on_dragleave = null;
+          this.on_received = null;
+
+          this._entered_level = null;
+
+          const me = this;
+          this._on_dragenter = (ev)=>{
+            ev.preventDefault();
+            if(me._entered_level === null) {
+              if(me.on_dragenter !== null)
+                me.on_dragenter(ev, me);
+              me._entered_level = [];
+            }
+            me._entered_level.push(ev.target);
+          };
+
+          this._on_dragleave = (ev)=>{
+            ev.preventDefault();
+            if(me._entered_level === null) {
+              me.on_dragleave(ev, me);
+              return;
+            }
+            if(me._entered_level.length == 1) {
+              me._entered_level = null;
+              if(me.on_dragleave !== null)
+                me.on_dragleave(ev, me);
+            }
+            else
+              me._entered_level.pop();
+          };
+
+          this._on_dragover = (ev)=>{
+            ev.preventDefault();
+          };
+
+          this._on_drop = (ev)=>{
+            ev.preventDefault();
+            me._entered_level = null;
+            if(me.on_received !== null)
+              me.on_received(ev, me);
+          };
+
+          this._on_dragend = (ev)=>{
+            ev.preventDefault();
+            if(me.on_dragenter !== null)
+              me.on_dragleave(ev, me);
+            me._entered_level = null;
+          };
+
+          html_element.addEventListener("dragenter", this._on_dragenter);
+          html_element.addEventListener("dragleave", this._on_dragleave);
+          html_element.addEventListener("dragover", this._on_dragover);
+          html_element.addEventListener("drop", this._on_drop);
+          html_element.addEventListener("dragend", this._on_dragend);
+        }
+
+        unbind() {
+          const html_element = this.raw_html_element;
+          
+          this.on_dragenter = null;
+          this.on_dragleave = null;
+          this.on_received = null;
+          html_element.removeEventListener("dragenter", this._on_dragenter);
+          html_element.removeEventListener("dragleave", this._on_dragleave);
+          html_element.removeEventListener("dragover", this._on_dragover);
+          html_element.removeEventListener("drop", this._on_drop);
+          html_element.removeEventListener("dragend", this._on_dragend);
+          super.unbind();
+        }
+      }
+      DropReceiver = C;
+    }
+    
     let EDiff;
     {
       const noise_size = 256;
-      const vert_shader_source = `#version 300 es
-layout(location = 0)in vec3 a;layout(location = 1)in vec2 b;out vec2 ot;out vec2 on;uniform float aa;void main(){gl_Position=vec4(a.x,a.y,a.z,1.0);ot=b;on=b*aa;}`;
-      const frag_shader_srgb_source = `#version 300 es
-in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc;uniform mediump float um;uniform mediump sampler2D ui;uniform mediump sampler2D un;uniform mediump sampler3D ua, ub;const mediump float q=1.0f/255.0f;const mediump float a=0.055;mediump vec3 d8(mediump vec3 m){mediump vec3 r=mod(m,q);mediump vec3 s=m-r;mediump vec3 n = texture(un,on).rgb;s+=vec3(greaterThan(r,n))*q;return s;}mediump vec3 dr(mediump vec3 x){const mediump mat3 m=transpose(mat3(0.299,0.587,0.114,-0.168736,-0.331264,0.5,0.5,-0.418688,-0.081312));return m*x+vec3(0.0,0.5,0.5);}mediump vec3 dy(mediump vec3 x){const mediump mat3 m=transpose(mat3(1,-1.21889419e-06,1.40199959e+00,1,-3.44135678e-01,-7.14136156e-01,1,1.77200007e+00,4.06298063e-07));return m*(x-vec3(0.0,0.5,0.5));}mediump vec3 s2lin(mediump vec3 x){mediump vec3 s=vec3(lessThanEqual(x,vec3(0.04045)));return s*(x/12.92)+(1.0-s)*pow((x+a)*(1.0/(1.0+a)),vec3(2.4));}mediump vec3 dl(mediump vec3 x){mediump vec3 s=vec3(lessThanEqual(x,vec3(0.0031308049535603713)));return s*(x*12.92)+(1.0-s)*((1.0+a)*pow(x,vec3(1.0/2.4))-a);}mediump vec3 lut_conv(mediump vec3 img){return mix(texture(ua,img).rgb,texture(ub,img).rgb,um);}void main(){mediump vec4 t=texture(ui,ot);if(uc==0)t.xyz=lut_conv(t.zyx);else if(uc==1)t.xyz=dy(lut_conv(dr(t.xyz).zyx));else if(uc==2)t.xyz=dl(lut_conv(s2lin(t.xyz).zyx));color.rgb=d8(t.rgb);color.a=t.a;}`;
+
+      const vert_shader_source = "#version 300 es\nlayout(location=0)in vec3 in_pos;layout(location=1)in vec2 in_tex_coord;out vec2 tex_coord;out vec2 noise_tex_coord;uniform float noise_scale_fac;void main(){gl_Position=vec4(in_pos.x,in_pos.y,in_pos.z,1.0);tex_coord=in_tex_coord;noise_tex_coord=in_tex_coord*noise_scale_fac;}";
+
+      const frag_shader_srgb_source = "#version 300 es\nin mediump vec2 tex_coord;in mediump vec2 noise_tex_coord;out mediump vec4 color;uniform lowp int color_mode;uniform mediump float lut_mix_ratio;uniform mediump sampler2D img_tex;uniform mediump sampler2D noise_tex;uniform mediump sampler3D lut_a,lut_b;const mediump float q=1.0f/255.0f;const mediump float a=0.055;mediump vec3 dithering_8bit(mediump vec3 img){mediump vec3 r_img=mod(img,q);mediump vec3 q_img=img-r_img;mediump vec3 noise=texture(noise_tex,noise_tex_coord).rgb;q_img+=vec3(greaterThan(r_img, noise))*q;return q_img;}mediump vec3 srgb_to_yuv(mediump vec3 x){const mediump mat3 conv_mat = transpose(mat3(0.299,0.587,0.114,-0.168736,-0.331264,0.5,0.5,-0.418688,-0.081312));return conv_mat*x+vec3(0.0,0.5,0.5);}mediump vec3 yuv_to_srgb(mediump vec3 x){const mediump mat3 conv_mat=transpose(mat3(1,-1.21889419e-06,1.40199959e+00,1,-3.44135678e-01,-7.14136156e-01,1,1.77200007e+00,4.06298063e-07));return conv_mat*(x-vec3(0.0,0.5,0.5));}mediump vec3 s2lin(mediump vec3 x){mediump vec3 s=vec3(lessThanEqual(x,vec3(0.04045)));return s*(x / 12.92f)+(1.0-s)*pow((x+a)*(1.0/(1.0+a)),vec3(2.4));}mediump vec3 lin2s(mediump vec3 x){mediump vec3 s=vec3(lessThanEqual(x,vec3(0.0031308049535603713)));return s*(x*12.92f)+(1.0-s)*((1.0+a)*pow(x,vec3(1.0/2.4))-a);}mediump vec3 lut_conv(mediump vec3 img){return mix(texture(lut_a,img).rgb,texture(lut_b, img).rgb,lut_mix_ratio);}void main(){mediump vec4 t=texture(img_tex,tex_coord);if(color_mode==0)t.xyz=lut_conv(t.zyx);else if(color_mode==1)t.xyz=yuv_to_srgb(lut_conv(srgb_to_yuv(t.xyz).zyx));else if(color_mode==2)t.xyz=lin2s(lut_conv(s2lin(t.xyz).zyx));color.rgb=dithering_8bit(t.rgb);color.a=t.a;}";
 
       const plane_vertex = new Float32Array([
         /* x, y, z, u, v */
@@ -1352,12 +1379,9 @@ in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc
 
           const img = data;
           const draw = this.raw_html_element;
-          const pixel_ratio = window.devicePixelRatio;
 
           draw.height = h;
           draw.width = w;
-          draw.style.height = h / pixel_ratio + "px";
-          draw.style.width = w / pixel_ratio + "px";
           
           const gl = draw.getContext("webgl2", {
             "alpha": true,
@@ -1376,13 +1400,13 @@ in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc
           gl.deleteShader(frag_shader);
           gl.deleteShader(vert_shader);
           
-          const loc_noise_scale_fac = gl.getUniformLocation(shader_program, "aa");
-          const loc_img_tex = gl.getUniformLocation(shader_program, "ui");
-          const loc_noise_tex = gl.getUniformLocation(shader_program, "un");
-          const loc_lut_a = gl.getUniformLocation(shader_program, "ua");
-          const loc_lut_b = gl.getUniformLocation(shader_program, "ub");
-          const loc_lut_mix_ratio = gl.getUniformLocation(shader_program, "um");
-          const loc_color_mode = gl.getUniformLocation(shader_program, "uc");
+          const loc_noise_scale_fac = gl.getUniformLocation(shader_program, "noise_scale_fac");
+          const loc_img_tex = gl.getUniformLocation(shader_program, "img_tex");
+          const loc_noise_tex = gl.getUniformLocation(shader_program, "noise_tex");
+          const loc_lut_a = gl.getUniformLocation(shader_program, "lut_a");
+          const loc_lut_b = gl.getUniformLocation(shader_program, "lut_b");
+          const loc_lut_mix_ratio = gl.getUniformLocation(shader_program, "lut_mix_ratio");
+          const loc_color_mode = gl.getUniformLocation(shader_program, "color_mode");
 
           const vbo = gl.createBuffer();
           const vao = gl.createVertexArray();
@@ -1569,11 +1593,10 @@ in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc
       }
       EDiff = C;
     }
-    import { lut_cube_bundle, n_diffusion, n_s, n_p, n_t, n_cube, cube_name_list, color_mode_list, cube_idx_list, n_mode } from "./cube-bundle.js"; // TO BE INLINED
 
     let i_curr_mode = null;
-    const fs_modal = document.getElementById("M");
-    const container = document.getElementById("T");
+    const fs_modal = document.getElementById("FSModal");
+    const container = document.getElementById("Container");
 
     const draw_flickable = Flickable.bind_to_id("DrawFlickable");
     const ediff = EDiff.bind_to_id("Draw");
@@ -1585,10 +1608,10 @@ in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc
     bind_file_recv();
     const button_save = Button.bind_to_id("Button-Save");
     
-    const input_strength = document.getElementById("G");
+    const input_strength = document.getElementById("DiffusionStrength");
     const text_filename = document.getElementById("FileName");
     const text_sizeinfo = document.getElementById("ImageSizeInfo");
-    const text_modal = document.getElementById("Q");
+    const text_modal = document.getElementById("ModalText");
     const draw = document.getElementById("Draw");
 
     update_diffusion_strength();
@@ -1604,7 +1627,7 @@ in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc
 
     function show_modal(s) {
       fs_modal.className = "Visible";
-      container.className = "H";
+      container.className = "BackHidden";
       text_modal.innerText = s;
     }
 
@@ -1619,13 +1642,13 @@ in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc
 
     function disable_button(btn) {
       const l = btn.raw_html_element.classList;
-      if(!l.contains("D"))
-        l.add("D");
+      if(!l.contains("Disabled"))
+        l.add("Disabled");
     }
 
     function enable_button(btn) {
       const l = btn.raw_html_element.classList;
-      l.remove("D");
+      l.remove("Disabled");
     }
 
     function bind_file_recv() {
@@ -1704,6 +1727,8 @@ in mediump vec2 ot;in mediump vec2 on;out mediump vec4 color;uniform lowp int uc
         text_sizeinfo.innerText = o.w + "Wx" + o.h + "H";
         ediff.set_img(o.h, o.w, o.data);
         draw_flickable.flick_content = draw;
+        const pixel_ratio = window.devicePixelRatio | 1;
+        draw_flickable.content_size = [o.h, o.w];
         draw_flickable.reset_viewport_to_center();
         enable_all_button();
       }

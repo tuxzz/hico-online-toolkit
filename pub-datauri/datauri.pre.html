@@ -6,6 +6,7 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="Cache-Control" content="no-siteapp">
   <title>Data URI Generator | Hico Toolkit</title>
+  <link href="hico-common.css" rel="stylesheet">
   <link rel="dns-prefetch" href="https://tuxzz.org">
   <style>
     html, body {
@@ -22,7 +23,7 @@
       box-sizing: content-box;
     }
 
-    a.B {
+    a.Button {
       box-sizing: border-box;
       display: block;
       border: 2px solid transparent;
@@ -40,22 +41,22 @@
       
     }
 
-    a.B:hover {
+    a.Button:hover {
       background-color: #000;
       color: #fff;
     }
 
-    a.B:active {
+    a.Button:active {
       transform: scale(0.95);
     }
 
-    a.B.E {
+    a.Button.Disabled {
       pointer-events: none;
       touch-action: none;
       color: #aaa;
     }
 
-    #T {
+    #Container {
       width: 100%;
       height: 100%;
       display: flex;
@@ -63,32 +64,32 @@
       transition: filter 0.5s;
     }
 
-    #T.BackHidden {
+    #Container.BackHidden {
       filter: brightness(1.5) saturate(5) blur(0.2in);
       transition: filter 0.5s;
     }
 
-    #N {
+    #Navigator {
       padding: 0 0.05in;
       display: flex;
       flex-direction: column;
       width: 2in;
     }
 
-    #N a.B {
+    #Navigator a.Button {
       border-left: 2px solid transparent;
       min-height: 0.5in;
     }
 
-    #N a.B.U {
+    #Navigator a.Button.Current {
       border-left: 2px solid #000;
     }
 
-    #N a.B.U:hover {
+    #Navigator a.Button.Current:hover {
       border-left: 2px solid #aaa;
     }
 
-    #S {
+    #SiteTitle {
       font-size: 0.25in;
       user-select: none;
       -moz-user-select: none;
@@ -96,13 +97,13 @@
       padding: 0.125in 0;
     }
 
-    #S span:last-child:before {
+    #SiteTitle span:last-child:before {
       display: inline;
       content: "Hico ";
       color: transparent;
     }
 
-    #P {
+    #PageContent {
       flex: 1 0 0;
       padding: 0 0.25in;
     }
@@ -114,13 +115,13 @@
       margin: 0;
     }
 
-    #M {
+    #FSModal {
       position: fixed;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAD1BMVEX///////////////////+Rd1MVAAAABXRSTlPMuMbBvl1S92gAAAK3SURBVEjHhVSLsdswDCNkD0DqdQB5g2SDtPsPVQJQ3WvuXeNEtkSR4AeUYgaiH/QvKzKi1kzL4hEt4MgY6H/26kmJhOBm9puGxqgAzp7kM6RW/R7R4gUJsPHK1sSVq7NQW1yrJ3YKJNpmwuszMlGUVIAA1OAHcJxggJZkpXGoXTTH5JIKjyjBZy+OYnR08y9eqyn4FTIzEM2W0Dk1mHL3w+BGQFi0VvSOzFHRrxNYAAOA8kBMRB6ZQnTm9W3N+pk34iWn1i3FAuInRxUSw/vSiQcTUtg/LYSYaa1kAW4SNS2r1BMXp3tcAZMq9kyuFYVL2Qt46w7PXTSOk+K7IhqHNFNAsLe1q40t1j630ZOqMKVWLnBcAB5fiEkSndDosWT2R8ndeFSqseFIZ9SVwpp0Q0a1PFkbCq6lAEY1SWuToQ8XX3KFY1SxHr/SuRL5TR+jJSi80vxxOOeEwEqp35xVflPcylThywlM9SrKBTwQ69xlJ9FpxHLpNgPkv+zZp8iUvfp7UHaVm9+n4r4bWMlVCJ0YC2+F9C+LdKnWWDuJkS5EiUAYqn4k1UeRDj5fAdvdT/75QXPRveIUhqDJSV7O6a8VhXSa73nnh8PXhqN35NOHiqHaHb5yVjx64eMDtQnXuzJti10Tn/uxGUhYWJqufbx9umV+5zrkX607KqGjyQFdX1JAWt9mIwtOQqV/0e9dBln4QZkqlffpgPfmQMc5uThwRzMdoWFoaNMa3uYclU4Kq4SmwiG5Rd7vcDKcb4r/SvdW+E6/dhiHToDuMze6XlBTuD25eOam0d3/6ZLC3Q+0Wng77d8dlTRPNe9EtbdvvNO5wMVklWb6soI0nP/aWodEwH+v47eyVvo+AP8cU0Tixnddo46EibX31oMp87W8uNevzd3FBXxhqMMMRdRz9PdD136k8ze8dTKLi0qCGAAAAABJRU5ErkJggg==');
+      background: url('./noisewhite.png');
       transition: background 0.5s;
 
       display: flex;
@@ -134,34 +135,42 @@
       -moz-user-select: none;
       pointer-events: none;
       touch-action: none;
+      z-index: 2147483647;
     }
 
-    #M.V {
+    #FSModal.Visible {
       opacity: 1;
       transition: opacity 0.25s;
       pointer-events: auto;
       touch-action: auto;
     }
 
-    .I {
+    .FlexFiller {
       flex: 1 0 0;
     }
 
-    #Q {
+    input[type='range'] {
+      -webkit-appearance: none;
+      margin: 0;
+      padding: 10px 0;
+      width: 100%;
+    }
+
+    #Info {
       margin: 0.125in 0;
       text-align: center;
     }
 
-    #X {
+    #ButtonBox {
       height: 0.75in;
     }
 
-    #X a.B {
+    #ButtonBox a.Button {
       height: 100%;
       min-width: 2in;
     }
 
-    a.O {
+    a.FileBox {
       width: 100%;
       height: 3in;
       text-align: center;
@@ -171,27 +180,27 @@
   </style>
 </head>
 <body>
-  <div id="T">
-    <nav id="N">
-      <div id="S"><span>Hico Online</span><br><span>Toolkit</span></div>
-      <a class="B U"><span>Data URI<br>Generator</span></a>
-      <a class="B" href="https://toolkit.tuxzz.org/ediff.html"><span>Error Diffusion<br>Art Generator</span></a>
-      <div class="I"></div>
-      <a class="B" href="https://tuxzz.org/"><span>About</span></a>
+  <div id="Container">
+    <nav id="Navigator">
+      <div id="SiteTitle"><span>Hico Online</span><br><span>Toolkit</span></div>
+      <a class="Button Current"><span>Data URI<br>Generator</span></a>
+      <a class="Button" href="https://toolkit.tuxzz.org/ediff.html"><span>Error Diffusion<br>Art Generator</span></a>
+      <div class="FlexFiller"></div>
+      <a class="Button" href="https://tuxzz.org/"><span>About</span></a>
     </nav>
-    <div id="P">
+    <div id="PageContent">
       <h1>Data URI Generator</h1>
-      <a id="F" class="B O E">
+      <a id="Bottom-FileSelect" class="Button FileBox Disabled">
         <span>Drop your file here<br>Or click to select a file</span>
       </a>
-      <div id="Q">Filename: <span id="L">(Empty)</span><br>Generated Data URI: <span id="K">(Empty)</span><br>Auto detected MIME: <span id="A">(Empty)</span></div>
-      <div id="X">
-        <a id="C" class="B E">Copy Data URI</a>
-        <a id="D" class="B E">Download Data URI</a>
+      <div id="Info">Filename: <span id="FileName">(Empty)</span><br>Generated Data URI: <span id="DataURIInfo">(Empty)</span><br>Auto detected MIME: <span id="AutoMIME">(Empty)</span></div>
+      <div id="ButtonBox">
+        <a id="Button-Copy" class="Button Disabled">Copy Data URI</a>
+        <a id="Button-Download" class="Button Disabled">Download Data URI</a>
       </div>
     </div>
   </div>
-  <div id="M"><span id="ModalText">Drop Here</span></div>
+  <div id="FSModal"><span id="ModalText">Drop Here</span></div>
 
   <script>
     (()=>{
@@ -344,7 +353,6 @@
       
       let DropReceiver;
       {
-        const c_text = ""
         class C extends HTMLBindable {
           constructor(html_element) {
             if(!html_element instanceof EventTarget)
@@ -370,6 +378,10 @@
 
             this._on_dragleave = (ev)=>{
               ev.preventDefault();
+              if(me._entered_level === null) {
+                me.on_dragleave(ev, me);
+                return;
+              }
               if(me._entered_level.length == 1) {
                 me._entered_level = null;
                 if(me.on_dragleave !== null)
@@ -420,7 +432,7 @@
         }
         DropReceiver = C;
       }
-
+      
       function hico_assert(cond, msg) {
         if(!cond)
           throw msg;
@@ -430,6 +442,69 @@
         hico_assert(cond, "Internal error: " + msg);
       }
 
+      function find_one_from_list(l, cond) {
+        const n = l.length;
+        if(cond instanceof Function) {
+          for(let i = 0; i < n; ++i) {
+            if(cond(l[i]) === true)
+              return i;
+          }
+        }
+        else {
+          for(let i = 0; i < n; ++i) {
+            if(l[i] === cond)
+              return i;
+          }
+        }
+        return null;
+      }
+
+      function remove_all_from_list(l, cond) {
+        const n = l.length;
+        let n_removed = 0;
+        if(cond instanceof Function) {
+          for(let i = 0; i < n; ++i) {
+            if(cond(l[i])) {
+              l.splice(i, 1);
+              ++n_removed;
+            }
+          }
+        }
+        else {
+          for(let i = 0; i < n; ++i) {
+            if(l[i] === cond) {
+              l.splice(i, 1);
+              ++n_removed;
+            }
+          }
+        }
+        return n_removed;
+      }
+
+      function remove_one_from_list(l, cond) {
+        const n = l.length;
+        if(cond instanceof Function) {
+          for(let i = 0; i < n; ++i) {
+            if(cond(l[i])) {
+              l.splice(i, 1);
+              return true;
+            }
+          }
+        }
+        else {
+          for(let i = 0; i < n; ++i) {
+            if(l[i] === cond) {
+              l.splice(i, 1);
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+
+      function lerp(a, b, ratio) {
+        return a + (b - a) * ratio;
+      }
 
       function number_to_string_with_comma(x)
       { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
@@ -479,24 +554,42 @@
         download_url(name, URL.createObjectURL(blob));
       };
 
-      const fs_modal = document.getElementById("M");
-      const container = document.getElementById("T");
+      function load_data_from_img(img) {
+        const canvas = document.createElement("canvas"); 
+        canvas.height = img.height;
+        canvas.width = img.width;
+        const ctx = canvas.getContext("2d", {
+          "alpha": true,
+          "willReadFrequently": true,
+        });
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        return {
+          "h": canvas.height,
+          "w": canvas.width,
+          "data": data,
+        };
+      }
 
-      const button_copy = Button.bind_to_id("C");
-      const button_download = Button.bind_to_id("D");
-      const button_file = Button.bind_to_id("F");
+      const fs_modal = document.getElementById("FSModal");
+      const container = document.getElementById("Container");
+
+      const button_copy = Button.bind_to_id("Button-Copy");
+      const button_download = Button.bind_to_id("Button-Download");
+      const button_file = Button.bind_to_id("Bottom-FileSelect");
       let file_recv;
       bind_file_recv();
       
-      const text_filename = document.getElementById("L");
-      const text_datauri_info = document.getElementById("K");
-      const text_auto_mime = document.getElementById("A");
+      const text_filename = document.getElementById("FileName");
+      const text_datauri_info = document.getElementById("DataURIInfo");
+      const text_auto_mime = document.getElementById("AutoMIME");
       const text_modal = document.getElementById("ModalText");
       
       let generated_data_uri = "data:;base64,";
 
       function show_modal(s) {
-        fs_modal.className = "V";
+        fs_modal.className = "Visible";
         container.className = "BackHidden";
         text_modal.innerText = s;
       }
@@ -512,13 +605,13 @@
 
       function disable_button(btn) {
         const l = btn.raw_html_element.classList;
-        if(!l.contains("E"))
-          l.add("E");
+        if(!l.contains("Disabled"))
+          l.add("Disabled");
       }
 
       function enable_button(btn) {
         const l = btn.raw_html_element.classList;
-        l.remove("E");
+        l.remove("Disabled");
       }
 
       function bind_file_recv() {

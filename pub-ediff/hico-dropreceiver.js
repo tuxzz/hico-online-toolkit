@@ -1,7 +1,5 @@
 import { HTMLBindable } from "./hico-htmlbindable.js";
 
-const c_text = ""
-
 export class DropReceiver extends HTMLBindable {
   constructor(html_element) {
     if(!html_element instanceof EventTarget)
@@ -27,6 +25,10 @@ export class DropReceiver extends HTMLBindable {
 
     this._on_dragleave = (ev)=>{
       ev.preventDefault();
+      if(me._entered_level === null) {
+        me.on_dragleave(ev, me);
+        return;
+      }
       if(me._entered_level.length == 1) {
         me._entered_level = null;
         if(me.on_dragleave !== null)

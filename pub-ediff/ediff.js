@@ -211,12 +211,9 @@ export class EDiff extends HTMLBindable {
 
     const img = data;
     const draw = this.raw_html_element;
-    const pixel_ratio = window.devicePixelRatio;
 
     draw.height = h;
     draw.width = w;
-    draw.style.height = h / pixel_ratio + "px";
-    draw.style.width = w / pixel_ratio + "px";
     
     const gl = draw.getContext("webgl2", {
       "alpha": true,

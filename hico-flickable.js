@@ -1,6 +1,6 @@
 import { Rect } from "./hico-rect.js";
 import { HTMLBindable } from "./hico-htmlbindable.js";
-import { hico_assert_intern, remove_one_from_list, find_one_from_list } from "./hico-util.js";
+import { hico_assert, hico_assert_intern, remove_one_from_list, find_one_from_list } from "./hico-util.js";
 
 const c_move_button = 1;
 const c_sub_move_button = 0;
@@ -319,6 +319,8 @@ export class Flickable extends HTMLBindable {
     this._saved_transform = null;
     this._saved_transformOrigin = null;
 
+    this._force_content_size = null;
+
     html_element.addEventListener("mousedown", this._on_mousedown);
     html_element.addEventListener("wheel", this._on_wheel);
     html_element.addEventListener("touchstart", this._on_touchstart);
@@ -364,17 +366,30 @@ export class Flickable extends HTMLBindable {
     const flickable = this.raw_html_element;
     [this._last_view_h, this._last_view_w] = [Math.max(1, flickable.clientHeight), Math.max(1, flickable.clientWidth)];
 
+    let [force_scale_y, force_scale_x] = [1, 1];
+    if(this._force_content_size !== null) {
+      const [fch, fcw] = this._force_content_size;
+      [force_scale_y, force_scale_x] = [fch / e.clientHeight, fcw / e.clientWidth];
+    }
     const [scale_y, scale_x] = [flickable.clientHeight / r.h, flickable.clientWidth / r.w];
     const [translate_y, translate_x] = [-r.y, -r.x];
     e.style.transformOrigin = 0 + "px " + 0 + "px";
-    e.style.transform = "scale(" + scale_x + ", " + scale_y + ") " + "translate(" + translate_x +  "px, " + translate_y + "px) ";
+    e.style.transform = "scale(" + scale_x * force_scale_x + ", " + scale_y * force_scale_y + ") " + "translate(" + translate_x / force_scale_x +  "px, " + translate_y / force_scale_y + "px) ";
   }
 
   get content_size() {
     const content = this.flick_content;
+    if(this._force_content_size !== null)
+      return this._force_content_size;
     if(!content)
       return [1, 1];
     return [content.clientHeight, content.clientWidth];
+  }
+
+  /* workaround for firefox bug */
+  set content_size(v) {
+    hico_assert(v === null || (v instanceof Array && v.length == 2), "Bad content_size value");
+    this._force_content_size = v;
   }
 
   map_screen_to_viewport_delta(y, x) {
@@ -393,7 +408,7 @@ export class Flickable extends HTMLBindable {
       return;
     const flickable = this.raw_html_element;
     const flickable_aspect = flickable.clientHeight / flickable.clientWidth;
-    const [eh, ew] = [e.clientHeight, e.clientWidth];
+    const [eh, ew] = this.content_size;
     let h, w, x, y;
     [y, x] = [e.clientTop, e.clientLeft];
     if(eh / ew <= flickable_aspect) {
